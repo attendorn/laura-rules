@@ -88,9 +88,9 @@
 
 ## Nach Compaction (Kontext-Komprimierung)
 
-Wenn der Kontext komprimiert wurde, fehlen ANLEITUNG.md, USER.md und MEMORY.md.
-**Sofort nach Compaction diese 3 Dateien per Read-Tool neu laden:**
-- `/Users/floriansiepe/Laura/ANLEITUNG.md`
+Wenn der Kontext komprimiert wurde, fehlen die Kerndateien (ANLEITUNG, USER.md, MEMORY.md).
+**Sofort nach Compaction neu laden:**
+- **ANLEITUNG — modus-abhängig:** Lief die Session im **Bau-Modus** (`/laura-work`) → `/Users/floriansiepe/Laura/ANLEITUNG-kern.md` (~23 KB). Im **Voll-Modus** (`/laura`) → `/Users/floriansiepe/Laura/ANLEITUNG.md` (~46 KB, über dem 25k-Read-Limit → in Chunks). Im Zweifel `-kern` (der pre-compact-Hook empfiehlt den richtigen Pfad in der Summary).
 - `/Users/floriansiepe/Laura/USER.md`
 - `/Users/floriansiepe/Laura/MEMORY.md`
 
