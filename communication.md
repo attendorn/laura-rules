@@ -40,6 +40,12 @@ Erst danach: technische Tabelle mit Code-Stellen, Smoke-Test-Plan, Risiken. Flor
 
 Eingeführt 27.04.2026 nach Adapter-Multi-Agentur-Plan – Florians Wunsch: vor jeder Architektur-Änderung in Klartext erklären was läuft.
 
+## Beleg-Anker-Pflicht für Vollzugsaussagen (eingeführt 06.07.2026, Florian-Freigabe)
+
+**Jede Vollzugs-/Verifikations-Aussage im Chat nennt in derselben Nachricht ihren Beleg** — Tool-Ergebnis, ID, Pfad, Zitat. Ohne Beleg wird sie als Absicht formuliert („ich sichere das jetzt"), nicht als Vollzug („habe ich gesichert"). Gilt besonders für: „gespeichert/gesichert", „verifiziert", „läuft", „gepusht", „deployed" — und für Sammel-Aussagen: eine Freigabe/ein Test deckt nur die Pfade, die er nachweislich durchlaufen hat, nie pauschal alle Teilpfade.
+
+Hintergrund: `overcompletion_framing` trat 4× in Folge auf (Review 06.07., Drei-Schichten-Diagnose in `memory/reviews/2026-07-06-full.md`); die bestehenden Hooks erkennen Klassifikations-Wörter, nicht unbelegten Vollzug. Diese Regel ist die Sofort-Schicht; der Anti-Bias-Verifier (Roadmap `49f70990`) ist der geplante Mechanismus am selben Signal. Prüfpunkt: nächster Review.
+
 ## Klassifikations-Disziplin (Skala vereinfacht 07.05.2026)
 
 **Skala (zwei Stufen):**
