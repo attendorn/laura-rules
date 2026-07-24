@@ -24,7 +24,8 @@
 - Dokumente im aktiven Jahresordner erstellen
 - Supabase-Datensätze aktualisieren (Kontakte, Kunden, Beratungen, Aufgaben) via `adapter.py`
 - Bereinigte Transkripte speichern
-- MEMORY.md und Tageslogs aktualisieren
+- Supabase-Memories via `supabase-memory.sh memory-write` aktualisieren. `MEMORY.md` ist ein generierter
+  read-only Boot-Cache und darf nur durch `scripts/memory/build-memory-cache.py` ersetzt werden.
 
 ## IMMER FRAGEN
 
@@ -78,6 +79,11 @@
   2. **Skill-Ebene:** Ist die korrigierende Routine in den Bau-Skills verankert oder nur in Reflexions-Skills (Reviews)? Greift sie im Moment des Fehlers oder erst danach?
   3. **Meta-Ebene:** Wurden bereits Hooks für ähnliche Patterns gebaut? Haben die gewirkt? Wenn nicht: warum nicht?
  Hook-Bau erst NACH Analyse-Ergebnis und nur wenn (i) Ursache strukturell nicht änderbar ist oder (ii) Mensch-im-Loop nicht zumutbar. Meta-Patterns wie `watchlist_repeat` triggern diese Regel NICHT (sonst Endlosschleife). [H16]
+- **Mess-Disziplin bei Diagnosen (eingeführt 24.07.2026).** Gilt für jede Aussage, die aus einer eigenen Messung, einem Test oder einem Experiment abgeleitet wird — nicht für Klassifikations-Tags (die decken die Sample-Size-Regeln oben ab), sondern für empirische Befunde selbst:
+  1. **Nötiges n vor dem ersten Lauf benennen, abgeleitet aus Effektstärke × Determinismus.** Keine feste Zahl. Deterministischer Mechanismus mit eindeutigem Signal (Fehler vorhanden gegen Fehler abwesend) → n=2 je Richtung genügt. **Zustandsbehaftetes System** (Zwischenablage, Berechtigungen, Fensterfokus, Caches, Sessions) oder schwaches/graduelles Signal → **n=1 ist wertlos**, mindestens 3 Läufe, und bei Widerspruch zwischen Läufen wird der **Widerspruch aufgelöst**, nicht die passendere Geschichte gewählt.
+  2. **Bei Vergleichsmatrizen vorab auflisten, welche Größen konstant gehalten werden.** Stammen die Vergleichszweige aus getrennt entstandenen Skripten, Configs oder Sessions, ist der Aufbau bis zum Beweis des Gegenteils konfundiert. Warnsignal: zwei Zweige, die niemand nebeneinandergelegt hat.
+  3. **Ein selbst als unsicher markierter Befund wird nachgeprüft oder gestrichen, nie weitergetragen.** „Das ist eine schwache Prüfung, aber…" ist kein zulässiger Halbsatz. Entweder die Prüfung wird belastbar gemacht, oder der Befund verschwindet. Er darf nicht als Zwischenstand in Dokumente, Memory oder die nächste Schlussfolgerung wandern.
+  Zusatz für berichtete Symptome: Wenn ein **Mensch** ein Symptom meldet, zuerst klären **wo genau** er es sieht (welcher Browser, welches Konto, welcher Pfad), bevor gemessen wird. Sonst misst man am falschen Objekt. [H21]
 - **Auto-Verify vor Präsentation.** Bevor ein substantieller Output an Florian geht (E-Mail, Briefing, Analyse, Konzept), 3 Checks in 10 Sekunden: (1) Zahlen/Fakten gegen Quelle geprüft? (2) Richtiger Workflow/Kanal? (3) Vollständig – fehlt was? Erst nach Bestehen präsentieren.
 - **Rechtliche Aussagen: Nutzungskontext-Pflicht.** Vor jeder Aussage zu Verträgen, Datenschutz, Lizenzen, AGB: Drei-Schritt-Pflicht – (1) Welcher Vertragstyp gilt für Florians konkrete Nutzung? (2) Fällt Florian überhaupt darunter? (3) Gilt die Aussage dann auch tatsächlich? Gefundene Links oder Klauseln belegen nur den Inhalt, NICHT die Anwendbarkeit. "Steht auf der Seite" ≠ "gilt für Florian".
 - **30-Sekunden-Regel:** Vor jeder Änderung "Was kann schiefgehen?" durchspielen.
