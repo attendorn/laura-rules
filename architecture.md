@@ -6,13 +6,14 @@
 - Rollen liegen in `~/Laura/agents/roles/` mit **YAML-Frontmatter** (name, description, model, tools, memory)
 - **Named Agents** nutzen: `name: "kalender-scout"` beim Agent-Aufruf → per `SendMessage(to: "name")` in der Session wiederverwenden statt neu spawnen
 - Model-Wahl: **Haiku** = Datensammlung, einfache MCP-Calls. **Sonnet** = Analyse, Synthese, Schreibarbeit. **Opus** = nur Hauptkontext (Laura selbst)
+- **Ausnahme Richter-/Reviewer-Knoten (Verifikation, Gegenprüfung, `/gegenlesen` — AP-0098, 30.07.2026):** geordnete Fallback-Leiter `opus` (Default per Arena-Urteil 30.07.) → `sonnet` (Fallback; False-BLOCKER-Neigung, siehe Matrix in `~/Laura/work/gegenlesen-modell-arena-2026-07-30.md`); Fable nur auf expliziten Florian-Zuruf, **niemals Haiku** — schwache Richter erzeugen False-Positive-Lawinen und übersehen echte Fehler. Die Zeile „Opus = nur Hauptkontext" gilt für Standard-Arbeits-Agenten, NICHT für Richter-Knoten. Modell beim Spawn immer explizit setzen, nie erben lassen.
 
 ## Sub-Agent-Patterns
 - **Hintergrund** (`run_in_background: true`): Für unabhängige Tasks (Downloads, Sync, Update-Check)
 - **Vordergrund**: Wenn Ergebnis Gate für nächsten Schritt ist (Kalender-Scout → Briefing)
 - **Proaktive Delegation**: >8k erwartete Token im Hauptkontext → automatisch an Sub-Agent
 - **MCP-Vererbung**: Sub-Agents erben automatisch MCP Tools von dynamisch registrierten Servern (ab 2.1.101)
-- **Keine Sub-Sub-Agents**: Agents spawnen keine eigenen Agents
+- **Sub-Sub-Agents erlaubt bis Tiefe 3** (gelockert 30.07.2026, Florian-Freigabe; Claude Code erlaubt Nesting-Tiefe 3 seit 2.1.220). Default bleibt flach: Orchestrierung im Hauptkontext mit Tiefe-1-Sub-Agenten. Tiefe 2-3 nur wenn ein Sub-Agent echten Orchestrierungs-Bedarf hat (z.B. Verifier-Orchestrator spawnt Winkel-Reviewer) — nie aus Bequemlichkeit
 
 ## Agent Teams (aktiviert 11.04.2026)
 - **Experimentell**, aktiviert via `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings.json
