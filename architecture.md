@@ -14,12 +14,13 @@
 - **Proaktive Delegation**: >8k erwartete Token im Hauptkontext → automatisch an Sub-Agent
 - **MCP-Vererbung**: Sub-Agents erben automatisch MCP Tools von dynamisch registrierten Servern (ab 2.1.101)
 - **Sub-Sub-Agents erlaubt bis Tiefe 3** (gelockert 30.07.2026, Florian-Freigabe; Claude Code erlaubt Nesting-Tiefe 3 seit 2.1.220). Default bleibt flach: Orchestrierung im Hauptkontext mit Tiefe-1-Sub-Agenten. Tiefe 2-3 nur wenn ein Sub-Agent echten Orchestrierungs-Bedarf hat (z.B. Verifier-Orchestrator spawnt Winkel-Reviewer) — nie aus Bequemlichkeit
+- **Worktree-Isolation gehärtet seit 2.1.222**: `isolation: "worktree"` schützt jetzt Datei-Edits UND Bash in jedem Session-Typ gegen destruktive Git-Commands gegen das Haupt-Checkout (vorher Lücke). `/fork` erzeugt seit 2.1.221 ebenfalls ein eigenes Worktree statt im Ursprungs-Checkout zu arbeiten.
 
 ## Agent Teams (aktiviert 11.04.2026)
 - **Experimentell**, aktiviert via `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings.json
 - **Unterschied zu Sub-Agents**: Teammates kommunizieren UNTEREINANDER (Mailbox), nicht nur zurück zum Parent
 - **Architektur**: Team Lead (Laura) + Teammates (eigene Claude-Instanzen) + Shared Task List + Mailbox
-- **Tools**: `TeamCreate`, `TeamDelete`, `SendMessage` (zwischen Teammates)
+- **Tools**: `TeamCreate`, `TeamDelete`, `SendMessage` (zwischen Teammates). Seit 2.1.222 läuft jede `SendMessage` an eine andere Agent-Session zusätzlich durch den Auto-Mode-Permission-Classifier vor Dispatch.
 - **Wann nutzen**: Komplexe Aufgaben mit Diskussion/Koordination (Research, parallele Reviews, Multi-Perspektiven, competing hypotheses)
 - **Wann NICHT**: Einfache Einzelaufgaben, sequenzielle Arbeit, same-file Edits
 - **Team-Größe**: 3-5 Teammates, 5-6 Tasks pro Teammate
@@ -35,6 +36,7 @@
 - **Plugin-Hooks** (ab 2.1.94): Hooks im Skill-Frontmatter funktionieren jetzt zuverlässig
 - **Aktive Hooks**: Skill-Usage-Log (PostToolUse/Skill), Test-Coverage-Check + Gedankenstrich-Warnung (PostToolUse/Write|Edit), Destruktive-Commands-Block (PreToolUse/Bash), Read-Token-Limit-Block (PreToolUse/Read, eingeführt 18.05.2026)
 - **PostToolUse feuert NICHT bei Tool-Errors** (18.05.2026 empirisch belegt). Bei Validierungs-Bedarf der Tool-Inputs/-Outputs IMMER PreToolUse, nie PostToolUse — PostToolUse läuft nur nach Erfolg.
+- **PreToolUse-Auto-Allow-Bypass in Background-Agent-Nebenoperationen gefixt (2.1.222)**: Summaries, Compaction und Renames von Hintergrund-Agents umgingen bisher Tool-Restrictions aus Auto-Allow-Hooks. Lauras Hooks (`check-overcompletion.sh`, `block-provinzial-write.sh`) greifen jetzt auch dort zuverlässig.
 
 ## Permission Model
 - **Allow-Liste**: Laura-Scripts + MCP-Server (auto-approved)
