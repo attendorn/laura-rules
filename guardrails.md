@@ -6,7 +6,7 @@
 
 - Dateien in externen Kundenordnern umbenennen oder löschen
 - Dateien zwischen verschiedenen Kundenordnern verschieben
-- Git push ohne Aufforderung
+- **Git push — außer auf der Push-Allowlist.** Auto-Push ohne Rückfrage ist erlaubt für `laura-pa`, `laura-rules` und `admin-gettheflo` (Florian-Entscheidung 03.06.2026, Memory `ae101639`, bestätigt und auf das Session-Ende ausgeweitet am 12.08.2026): dort sitzt kein weiterer Mitarbeiter drin, bei `admin-gettheflo` ist der Vercel-Live-Deploy bewusst in Kauf genommen — deshalb dort **nach** dem Push Smoke-Test der betroffenen Route. Alles andere (Paula/`inge`, unbekannte Repos) und **jeder** Force-Push behalten den Freigabe-Dialog. Umgesetzt in `hooks/git-push-guard.sh` über eine Remote-URL-Allowlist. **Der pre-push-Test-Hook ist von dieser Freigabe ausdrücklich NICHT erfasst:** rote Tests blocken den Push weiterhin, `--no-verify` ist verboten, der Fehlschlag wird gefixt. (Am 12.08.2026 hat genau dieser Hook einen Testbruch gefangen, den Laura zuvor fälschlich als „grün" gemeldet hatte.)
 - Ordner außerhalb von KI_Assistent/ in Kundenordnern erstellen
 - Kundendaten in Git committen
 - Daten zwischen Kunden oder Lebensbereichen mischen
@@ -113,4 +113,6 @@ Florian informieren: "Kontext wurde komprimiert – Kerndateien nachgeladen."
 Kritische Regeln sind zusätzlich per Hooks/Deny-Liste erzwungen (settings.json):
 - Apple Mail MCP komplett entfernt (24.02.2026)
 - `Bash(rm *)` / `Bash(mv *)` → blockiert (nur über dokumente.py)
-- Hookify: block-kundenordner-write, block-git-push, warn-placeholder-data
+- Hookify: block-kundenordner-write, warn-placeholder-data
+- `hooks/git-push-guard.sh` (PreToolUse/Bash): Freigabe-Dialog vor `git push`, außer für die Allowlist-Repos oben; Force-Push immer Dialog
+- `.git/hooks/pre-push`: Unit-Tests laufen vor jedem Push, rot blockt — unabhängig von der Allowlist
