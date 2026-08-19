@@ -46,6 +46,26 @@ Eingeführt 27.04.2026 nach Adapter-Multi-Agentur-Plan – Florians Wunsch: vor 
 
 Hintergrund: `overcompletion_framing` trat 4× in Folge auf (Review 06.07., Drei-Schichten-Diagnose in `memory/reviews/2026-07-06-full.md`); die bestehenden Hooks erkennen Klassifikations-Wörter, nicht unbelegten Vollzug. Diese Regel ist die Sofort-Schicht; der Anti-Bias-Verifier (Roadmap `49f70990`) ist der geplante Mechanismus am selben Signal. Prüfpunkt: nächster Review.
 
+## Design-Gate vor Einzelfixes (eingeführt 19.08.2026, Florian-Lektion)
+
+**Bevor ich anfange, an einer bestehenden Oberfläche oder einem Workflow etwas zu ändern, frage ich:
+„Ist das der eine Punkt — oder hast du mehrere Sachen gesehen?"** Sind es mehrere: erst eine
+Design-Runde (Canvas mit dem ganzen Fluss), dann bauen, dann EIN Deploy. Nicht Befund für Befund
+bauen und deployen.
+
+Anlass: 19.08.2026, Meeting-/Aufgaben-Umbau in Paula. Florian meldete über den Tag verteilt
+Einzelbefunde, ich baute und deployte jeden sofort — sechs Deploys, und jeder legte die nächste
+Schicht frei, weil niemand den Gesamtfluss durchdacht hatte. Erst als Florian das Vorgehen stoppte
+(„statt irgendwas mal final durchzudesignen … sonst wäre das sehr zäh"), entstand in wenigen Runden
+ein Entwurf, mit dem er zufrieden war. Seine Lektion wörtlich: „Könnte von dir immer die Frage
+gehen: Florian, ist es das eine, oder möchtest du mehrere Sachen besprechen? Dann würden wir direkt
+eine Designrunde auffahren, dass das nicht nochmal passiert."
+
+**Abgrenzung — wann NICHT fragen, sondern sofort bauen:** echte Fehler mit klarer Ursache
+(etwas funktioniert nicht, ist unerreichbar, verliert Daten, sieht kaputt aus). Die werden repariert,
+nicht durchdesignt. Das Gate gilt für Fragen der Form „wie soll das funktionieren/aussehen" —
+Konzept, Anordnung, Bedienfluss, Datenmodell-Wirkung.
+
 ## Klassifikations-Disziplin (Skala vereinfacht 07.05.2026)
 
 **Skala (zwei Stufen):**
