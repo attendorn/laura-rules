@@ -16,6 +16,44 @@
 - **Sub-Sub-Agents erlaubt bis Tiefe 3** (gelockert 30.07.2026, Florian-Freigabe; Claude Code erlaubt Nesting-Tiefe 3 seit 2.1.220). Default bleibt flach: Orchestrierung im Hauptkontext mit Tiefe-1-Sub-Agenten. Tiefe 2-3 nur wenn ein Sub-Agent echten Orchestrierungs-Bedarf hat (z.B. Verifier-Orchestrator spawnt Winkel-Reviewer) — nie aus Bequemlichkeit
 - **Worktree-Isolation gehärtet seit 2.1.222**: `isolation: "worktree"` schützt jetzt Datei-Edits UND Bash in jedem Session-Typ gegen destruktive Git-Commands gegen das Haupt-Checkout (vorher Lücke). `/fork` erzeugt seit 2.1.221 ebenfalls ein eigenes Worktree statt im Ursprungs-Checkout zu arbeiten.
 
+## Session-Worktrees: was mitwandert und was nicht (26.08.2026, AP-0147 + AP-0251)
+
+Mehrere Bau-Sitzungen gleichzeitig sind der Normalfall. Ein eigener Worktree je Sitzung trennt
+die Arbeitsbäume — aber **nicht alles folgt der Sitzung**, und die Unterschiede sind gemessen,
+nicht angenommen.
+
+**Was der Sitzung folgt:** Die Hook-Inhalte. `code/hooks/dispatch.sh` löst den Baum der
+aufrufenden Sitzung auf (`git rev-parse --show-toplevel` im Prozess-cwd, mit `CLAUDE_PROJECT_DIR`
+als Rückfall) und exportiert ihn als `LAURA_WURZEL`. 14 Hooks leiten ihre Pfade daraus ab; sie
+bewachen die **Vereinigung** aus Sitzungs-Baum und Hauptbaum, damit eine Worktree-Sitzung die
+Hauptbaum-Dateien nicht unbewacht ändern kann.
+
+**Was bewusst am Hauptbaum bleibt:** Alles, was zwei Sitzungen voneinander sehen müssen oder
+physisch einmalig ist — `.active-tasks.json` (das schwarze Brett), Not-Aus-Flags,
+Deploy-Freigaben, das Browser-Profil, zentrale Protokolle. Ein Brett, das dem Worktree folgt,
+macht jede Sitzung für die anderen unsichtbar.
+
+**Die eine Asymmetrie, die man kennen muss:** *Hooks folgen der Sitzung, Slash-Commands nicht.*
+`~/.claude/commands` ist ein Symlink auf `code/commands` im Hauptbaum — eine Worktree-Sitzung
+führt immer dessen Fassung aus. Wer einen Command ändert, testet ihn **im Hauptbaum oder gar
+nicht**; im eigenen Baum bekäme er ein grünes Ergebnis, das nie gelaufen ist. Über `dispatch.sh`
+nicht lösbar: Der Symlink wird aufgelöst, bevor Laura-Code läuft.
+
+**Weitere Grenzen, kurz:** Die Hook-Registrierung in `settings.json` ist global. `bin/python3`
+und `notion-rag` sind absolute Symlinks — venv und RAG sind geteilt. Ein frischer Worktree ist
+keine Kopie: alles Gitignorierte fehlt (Caches, `.env`, `node_modules`, `settings.local.json`).
+19 launchd-Jobs adressieren den Hauptbaum. Und das Push-Rennen auf `main` bleibt: Worktrees
+trennen Arbeitsbäume, nicht Refs.
+
+**Nebenläufigkeit auf geteilten Dateien:** Wo mehrere Sitzungen dieselbe Datei fortschreiben,
+genügt ein atomarer Ersatz (`os.replace`, `mv`) **nicht** — der Lese-Ändere-Schreibe-Zyklus
+davor muss geschützt sein. Gemessen am 26.08.: bei acht gleichzeitigen Schreibern überlebte
+genau ein Eintrag. Hausmuster auf macOS (kein `flock`): `mkdir` als Sperre plus **Verfallsfrist**
+— ohne die tauscht man seltenen Datenverlust gegen dauerhaften Ausfall. Referenzen:
+`active-task.sh`, `log-skill-usage.sh`. Wo es von vornherein richtig gebaut ist:
+`pakete-nummer.sh` mit `O_CREAT|O_EXCL`, wo Ermitteln und Belegen in einen unteilbaren Schritt
+fallen.
+
 ## Agent Teams (aktiviert 11.04.2026)
 - **Experimentell**, aktiviert via `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings.json
 - **Unterschied zu Sub-Agents**: Teammates kommunizieren UNTEREINANDER (Mailbox), nicht nur zurück zum Parent
