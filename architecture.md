@@ -33,6 +33,26 @@ physisch einmalig ist — `.active-tasks.json` (das schwarze Brett), Not-Aus-Fla
 Deploy-Freigaben, das Browser-Profil, zentrale Protokolle. Ein Brett, das dem Worktree folgt,
 macht jede Sitzung für die anderen unsichtbar.
 
+**Wie eine Sitzung zu ihrem Baum kommt** (seit 27.08.2026 ein Weg statt dreier):
+`worktree.sh neu <slug>` legt unter `~/Laura-worktrees/<slug>` an, auf Zweig `wt/<slug>`, und
+**rüstet dabei nach** — `npm ci` im `outlook-resolver` und `.claude/settings.local.json`. Beides
+ist gitignored und wandert nicht mit; ohne das erste wird der pre-push-Hook rot, ohne dass an der
+eigenen Änderung etwas falsch wäre, und ohne das zweite startet die Sitzung ohne ihre
+Berechtigungs-Freigaben. Hineingewechselt wird mit `EnterWorktree` und dem Parameter **`path`** —
+`name` legte einen zweiten Baum an falscher Stelle an. Der Ort liegt bewusst **außerhalb** des
+Hauptbaums, sonst stünden die Bäume als untracked in dessen `git status`. Zurück geht es mit
+`git push origin HEAD:main` aus dem Baum heraus: Das bewegt nur den Zeiger, während ein
+`merge --ff-only` den Arbeitsbaum einer womöglich laufenden fremden Sitzung anfasst.
+
+**Ein Baum allein trennt noch nicht — Skripte müssen mitziehen.** Am 27.08. gemessen:
+`testsuite-lauf.sh` hatte `$HOME/Laura` hart verdrahtet und testete deshalb aus jedem Worktree
+heraus den **Hauptbaum**. Grünes Ergebnis, fremder Code, eigene Änderung nie geprüft — dieselbe
+Gattung wie der Hook, der die falsche Datei bewachte. Die Sortierregel für solche Skripte ist
+dieselbe wie oben: **Code folgt der Sitzung** (Testdateien, Bibliotheken, ein baumeigenes venv,
+falls vorhanden), **geteilter Zustand bleibt am Hauptbaum** (Alarmdateien, Lauflogs, Sperren —
+eine Sperre je Baum serialisiert nichts). Wer ein Skript baut, das beides anfasst, braucht zwei
+Variablen, nicht eine.
+
 **Die eine Asymmetrie, die man kennen muss:** *Hooks folgen der Sitzung, Slash-Commands nicht.*
 `~/.claude/commands` ist ein Symlink auf `code/commands` im Hauptbaum — eine Worktree-Sitzung
 führt immer dessen Fassung aus. Wer einen Command ändert, testet ihn **im Hauptbaum oder gar
