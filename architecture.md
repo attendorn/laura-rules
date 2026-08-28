@@ -18,61 +18,27 @@
 
 ## Session-Worktrees: was mitwandert und was nicht (26.08.2026, AP-0147 + AP-0251)
 
-Mehrere Bau-Sitzungen gleichzeitig sind der Normalfall. Ein eigener Worktree je Sitzung trennt
-die Arbeitsbäume — aber **nicht alles folgt der Sitzung**, und die Unterschiede sind gemessen,
-nicht angenommen.
+Mehrere Bau-Sitzungen parallel sind der Normalfall; je Sitzung ein eigener Worktree. Vier Regeln,
+alle gemessen, nicht angenommen (Messprotokolle → guardrails-historie.md [H27]):
 
-**Was der Sitzung folgt:** Die Hook-Inhalte. `code/hooks/dispatch.sh` löst den Baum der
-aufrufenden Sitzung auf (`git rev-parse --show-toplevel` im Prozess-cwd, mit `CLAUDE_PROJECT_DIR`
-als Rückfall) und exportiert ihn als `LAURA_WURZEL`. 14 Hooks leiten ihre Pfade daraus ab; sie
-bewachen die **Vereinigung** aus Sitzungs-Baum und Hauptbaum, damit eine Worktree-Sitzung die
-Hauptbaum-Dateien nicht unbewacht ändern kann.
+- **Code folgt der Sitzung, geteilter Zustand bleibt am Hauptbaum.** Hooks lösen über
+  `code/hooks/dispatch.sh` den Baum der aufrufenden Sitzung auf (`LAURA_WURZEL`) und bewachen die
+  Vereinigung aus Sitzungs- und Hauptbaum. Am Hauptbaum bleiben `.active-tasks.json`, Not-Aus-Flags,
+  Deploy-Freigaben, Browser-Profil, Alarmdateien, Lauflogs, Sperren. Skripte, die beides anfassen,
+  brauchen zwei Variablen, nicht eine (`testsuite-lauf.sh` testete sonst aus jedem Baum den Hauptbaum).
+- **Ein Weg zum Baum:** `worktree.sh neu <slug>` → `~/Laura-worktrees/<slug>`, Zweig `wt/<slug>`,
+  rüstet `npm ci` (outlook-resolver) und `.claude/settings.local.json` nach (beides gitignored).
+  Wechsel mit `EnterWorktree` und Parameter **`path`** (nicht `name`). Zurück mit
+  `git push origin HEAD:main` aus dem Baum, nie `merge --ff-only` im Hauptbaum, nie `--force`.
+- **Hooks folgen der Sitzung, Slash-Commands nicht.** `~/.claude/commands` ist ein Symlink auf
+  `code/commands` im Hauptbaum — ein geänderter Command wird **im Hauptbaum oder gar nicht** getestet.
+- **Nebenläufigkeit auf geteilten Dateien:** atomarer Ersatz genügt nicht, der Lese-Ändere-Schreibe-
+  Zyklus braucht eine Sperre — Hausmuster `mkdir` + Verfallsfrist (`active-task.sh`,
+  `log-skill-usage.sh`) oder `O_CREAT|O_EXCL` (`pakete-nummer.sh`).
 
-**Was bewusst am Hauptbaum bleibt:** Alles, was zwei Sitzungen voneinander sehen müssen oder
-physisch einmalig ist — `.active-tasks.json` (das schwarze Brett), Not-Aus-Flags,
-Deploy-Freigaben, das Browser-Profil, zentrale Protokolle. Ein Brett, das dem Worktree folgt,
-macht jede Sitzung für die anderen unsichtbar.
-
-**Wie eine Sitzung zu ihrem Baum kommt** (seit 27.08.2026 ein Weg statt dreier):
-`worktree.sh neu <slug>` legt unter `~/Laura-worktrees/<slug>` an, auf Zweig `wt/<slug>`, und
-**rüstet dabei nach** — `npm ci` im `outlook-resolver` und `.claude/settings.local.json`. Beides
-ist gitignored und wandert nicht mit; ohne das erste wird der pre-push-Hook rot, ohne dass an der
-eigenen Änderung etwas falsch wäre, und ohne das zweite startet die Sitzung ohne ihre
-Berechtigungs-Freigaben. Hineingewechselt wird mit `EnterWorktree` und dem Parameter **`path`** —
-`name` legte einen zweiten Baum an falscher Stelle an. Der Ort liegt bewusst **außerhalb** des
-Hauptbaums, sonst stünden die Bäume als untracked in dessen `git status`. Zurück geht es mit
-`git push origin HEAD:main` aus dem Baum heraus: Das bewegt nur den Zeiger, während ein
-`merge --ff-only` den Arbeitsbaum einer womöglich laufenden fremden Sitzung anfasst.
-
-**Ein Baum allein trennt noch nicht — Skripte müssen mitziehen.** Am 27.08. gemessen:
-`testsuite-lauf.sh` hatte `$HOME/Laura` hart verdrahtet und testete deshalb aus jedem Worktree
-heraus den **Hauptbaum**. Grünes Ergebnis, fremder Code, eigene Änderung nie geprüft — dieselbe
-Gattung wie der Hook, der die falsche Datei bewachte. Die Sortierregel für solche Skripte ist
-dieselbe wie oben: **Code folgt der Sitzung** (Testdateien, Bibliotheken, ein baumeigenes venv,
-falls vorhanden), **geteilter Zustand bleibt am Hauptbaum** (Alarmdateien, Lauflogs, Sperren —
-eine Sperre je Baum serialisiert nichts). Wer ein Skript baut, das beides anfasst, braucht zwei
-Variablen, nicht eine.
-
-**Die eine Asymmetrie, die man kennen muss:** *Hooks folgen der Sitzung, Slash-Commands nicht.*
-`~/.claude/commands` ist ein Symlink auf `code/commands` im Hauptbaum — eine Worktree-Sitzung
-führt immer dessen Fassung aus. Wer einen Command ändert, testet ihn **im Hauptbaum oder gar
-nicht**; im eigenen Baum bekäme er ein grünes Ergebnis, das nie gelaufen ist. Über `dispatch.sh`
-nicht lösbar: Der Symlink wird aufgelöst, bevor Laura-Code läuft.
-
-**Weitere Grenzen, kurz:** Die Hook-Registrierung in `settings.json` ist global. `bin/python3`
-und `notion-rag` sind absolute Symlinks — venv und RAG sind geteilt. Ein frischer Worktree ist
-keine Kopie: alles Gitignorierte fehlt (Caches, `.env`, `node_modules`, `settings.local.json`).
-19 launchd-Jobs adressieren den Hauptbaum. Und das Push-Rennen auf `main` bleibt: Worktrees
-trennen Arbeitsbäume, nicht Refs.
-
-**Nebenläufigkeit auf geteilten Dateien:** Wo mehrere Sitzungen dieselbe Datei fortschreiben,
-genügt ein atomarer Ersatz (`os.replace`, `mv`) **nicht** — der Lese-Ändere-Schreibe-Zyklus
-davor muss geschützt sein. Gemessen am 26.08.: bei acht gleichzeitigen Schreibern überlebte
-genau ein Eintrag. Hausmuster auf macOS (kein `flock`): `mkdir` als Sperre plus **Verfallsfrist**
-— ohne die tauscht man seltenen Datenverlust gegen dauerhaften Ausfall. Referenzen:
-`active-task.sh`, `log-skill-usage.sh`. Wo es von vornherein richtig gebaut ist:
-`pakete-nummer.sh` mit `O_CREAT|O_EXCL`, wo Ermitteln und Belegen in einen unteilbaren Schritt
-fallen.
+Weitere Grenzen: Hook-Registrierung in `settings.json` ist global; `bin/python3` und `notion-rag`
+sind absolute Symlinks (venv/RAG geteilt); ein frischer Baum hat nichts Gitignoriertes; 19 launchd-Jobs
+adressieren den Hauptbaum; das Push-Rennen auf `main` bleibt.
 
 ## Agent Teams (aktiviert 11.04.2026)
 - **Experimentell**, aktiviert via `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings.json
@@ -131,7 +97,5 @@ fallen.
 - Neue Dokumente → immer Typst. Details: `memory/topics/html-print-css.md`
 
 ## Versions-Awareness
-- Installierte Version: `claude -v` (CLI) + `code --list-extensions --show-versions | grep claude` (Extension)
-- Update: `claude update` (CLI), Extension auto-updated via Marketplace
-- Changelog + Workflow-Impact: `~/Laura/memory/topics/claude-code-updates.md`
+- Changelog + Workflow-Impact: `~/Laura/memory/topics/claude-code-updates.md` (dort auch Prüf-/Update-Befehle)
 - **Default Effort = High** seit 2.1.94 (steuerbar via `/effort`)
