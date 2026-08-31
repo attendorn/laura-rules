@@ -82,6 +82,41 @@ adressieren den Hauptbaum; das Push-Rennen auf `main` bleibt.
 ## Architektur-Aufträge mit Buzzwords ("generalisieren", "modul", "studio")
 - **Mental-Model VOR Datenmodell klären (eingeführt 18.05.2026 nach Studio-Pfad-B-Missverständnis).** Bei jedem Architektur-Auftrag mit abstrakten Wörtern wie „generalisieren", „X als Modul", „aus jeder Entity X" zuerst rückfragen WIE der Trigger/Einstieg aussehen soll, nicht nur WAS technisch generalisiert wird. Rückfrage-Pflicht in der Brainstorm-Phase: „Wo soll Florian den Trigger sehen — Button in der Detail-Page? Chat-Eingabe? Slash-Command? Listen-Aktion?" Erst Mental-Model-Bestätigung, dann Datenmodell + UI gemeinsam. (Herkunft → guardrails-historie.md [H18])
 
+## Modell oder Code? (eingeführt 31.08.2026)
+
+**KI nur dort, wo Verstehen nötig ist — alles andere ist deterministischer Code.** Ein Modellaufruf
+ist zu rechtfertigen, nicht zu unterstellen: Er kostet Geld, ist nicht reproduzierbar und kann
+plausibel danebenliegen, ohne es zu melden. Code ist schneller, billiger, wiederholbar und lässt
+sich testen. Die Prüffrage vor jedem Aufruf: *Muss hier etwas verstanden, abgewogen oder formuliert
+werden — oder wird nur verglichen, gezählt, umgeformt, gesucht?* Nur der erste Fall ist Modellarbeit.
+
+Belegender Anlass (Video-Abgleich 31.08.): Techniken aus einem Transkript zu extrahieren ist
+Verstehen — dafür lief ein Modell. Zu prüfen, ob ein Beleg-Zitat wörtlich in der Quelle steht, ist
+Vergleichen — dafür lief ein zehnzeiliges Python-Skript. **Das Skript fand einen Zitierfehler des
+Modells, den kein zweiter Modellaufruf zuverlässig gefunden hätte.** Umgekehrt gilt die Regel auch:
+Wo ein deterministischer Prüfer gebaut wird, muss er selbst geprüft werden — der erste Anlauf jenes
+Skripts löschte Zeilenumbrüche statt sie zu ersetzen und hätte fast einen falschen Befund erzeugt.
+
+## Fremde Lösungen: Baustein, Muster oder Messlatte? (eingeführt 31.08.2026)
+
+Bevor eine fremde Lösung (Bibliothek, Framework, Plugin, fremder Workflow) bewertet wird, ihre
+**Rolle** benennen — sie ist genau eine der drei:
+
+| Rolle | Bedeutung | Frage |
+|---|---|---|
+| **Baustein** | Der Code selbst wird übernommen und läuft bei uns | Wollen wir von deren Versions-Uhr abhängen? |
+| **Muster** | Nur die Idee wird übernommen, gebaut wird selbst | Was genau ist die Idee, losgelöst vom Werkzeug? |
+| **Messlatte** | Weder Code noch Idee — sie zeigt, was gut genug wäre | Woran erkennen wir, dass wir gleichauf sind? |
+
+**Fremde Lösungen lösen fremde Probleme.** Ohne diese Trennung wird eine Sache als Ganzes
+angenommen oder als Ganzes verworfen — beides meist falsch. Anlass: Der Rat verwarf am 20.08.2026
+BMAD einstimmig als **Baustein** (Vertrauensinstanz an fremder Versions-Uhr, Memory `ea074be5`) —
+richtig, aber einzelne BMAD-Bausteine wären als **Muster** brauchbar gewesen, und der Befund über
+seine löchrige Durchsetzung war eine **Messlatte**, die uns den eigenen blinden Fleck zeigte.
+Gleiches Bild am 31.08. bei LangGraph: Konzept ja (Muster), Bibliothek nein (Baustein).
+
+Die Rolle gehört in die Prior-Art-Prüfung des Arbeitspakets, nicht in den Kopf.
+
 ## Paula-API: Routen-Bau-Disziplin (eingeführt 11.05.2026)
 - **Vor neuem Endpoint-Bau IMMER drei Stellen greppen**: `~/paula/apps/api/src/index.ts`, `~/paula/apps/api/src/routes/*`, **`~/paula/apps/api/src/lib/openapi-routes.ts`**. Letzteres registriert generische CRUD-Routes über `app.route('/', openapiRoutes)` als erstes — fängt deshalb gleichnamige Pfade vor allen anderen ab.
 - Sauberer Pfad: **bestehende Generic-Routes erweitern, nicht parallel bauen**.
