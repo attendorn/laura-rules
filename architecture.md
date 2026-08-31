@@ -97,6 +97,26 @@ Modells, den kein zweiter Modellaufruf zuverlässig gefunden hätte.** Umgekehrt
 Wo ein deterministischer Prüfer gebaut wird, muss er selbst geprüft werden — der erste Anlauf jenes
 Skripts löschte Zeilenumbrüche statt sie zu ersetzen und hätte fast einen falschen Befund erzeugt.
 
+### Schattenlauf bei teurer Arbeit (Florian-Vorgabe 31.08.2026)
+
+**Immer wenn etwas Token-Intensives startet — oder wenn im Nachhinein auffällt, dass es teuer war —
+läuft der lokale Qwen (MLX, Port 8081) zusätzlich über dieselbe Aufgabe.** Nicht als Ersatz: Sein
+Ergebnis wird protokolliert und mit dem echten verglichen, nie in die Auslieferung gemischt.
+
+Der Grund ist nicht Sparen, sondern **Erfahrung sammeln, wo lokale Arbeit trägt und wo nicht** — und
+das kostet nichts, weil das Modell auf Florians Rechner läuft. Ohne solche Schattenläufe bleibt die
+Modellwahl eine Meinung; mit ihnen wird sie nach ein paar Fällen eine belegte Entscheidung.
+
+Auslöser (jeder für sich genügt): ein Lauf über 100k Token · eine Aufgabe, die dieselbe Struktur aus
+langem Text zieht · mehrere parallele Sub-Agenten auf demselben Material · ein `/gegenlesen`-Lauf ·
+jede Auswertung, die sich wiederholt. Wo der Vergleich nicht geht, gehört das benannt statt
+übergangen — ein lokales Modell ohne Netz kann keine Primärquellen nachschlagen, und das ist eine
+fehlende Fähigkeit, kein schlechtes Ergebnis.
+
+Betriebswissen (Denkmodus abschalten, zwei getrennte Aufträge, Codezäune strippen, Beleg-Prüfung
+mechanisch gegenlesen): `work/video-abgleich-2026-08-31/LIESMICH.md`, Memory-Lesson `d83d3111`.
+Laufende Messstrecke: AP-0286.
+
 ## Fremde Lösungen: Baustein, Muster oder Messlatte? (eingeführt 31.08.2026)
 
 Bevor eine fremde Lösung (Bibliothek, Framework, Plugin, fremder Workflow) bewertet wird, ihre
