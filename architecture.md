@@ -54,7 +54,7 @@ adressieren den Hauptbaum; das Push-Rennen auf `main` bleibt.
 
 ## Hooks (settings.json)
 - **Conditional Hooks**: `matcher`-Feld für Tool-spezifische Hooks (z.B. nur bei "Write|Edit")
-- **PreToolUse**: Validierung/Blocking vor Ausführung. Stdout → User-Feedback
+- **PreToolUse**: Validierung/Blocking vor Ausführung. **Bei Exit 0 erreicht weder stdout noch stderr irgendjemanden** (nur Debug-Log; Claude Code 2.1.251, Doku + Sitzungsprotokoll-Beleg 01.09.2026) — sichtbar ist dann ausschließlich JSON auf stdout: `hookSpecificOutput.additionalContext` erreicht das Modell, `systemMessage` den Nutzer. Bei Exit 2 (Block) ist stderr sichtbar. Ein Hook, der bei Exit 0 nur Text ausgibt, warnt niemanden — so lag die AP-0285-Anzeige drei echte Doppelsitzungs-Commits lang auf stderr (Memory `bed6392f`). Testrahmen müssen stdout/stderr TRENNEN, sonst ist der Kanalfehler unsichtbar.
 - **PostToolUse**: Logging, Nachverarbeitung. `$CLAUDE_TOOL_INPUT` als JSON im Script lesen (nicht Shell-Expansion im command)
 - **SessionStart**: Terminal-Titel, Context Injection via stdout
 - **Plugin-Hooks** (ab 2.1.94): Hooks im Skill-Frontmatter funktionieren jetzt zuverlässig
