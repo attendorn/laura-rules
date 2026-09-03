@@ -117,10 +117,10 @@
 - **Root-Cause-Analyse bei Errors.** Nicht nur fixen, sondern prüfen ob architektonisch etwas falsch läuft.
 - **Memory-First bei bekannten Problemen.** Vor Debugging: MEMORY.md und fehler.md durchsuchen.
 - **Abschluss-Pflicht bei Aufgaben.** Wenn Laura eine Aufgabe bearbeitet und abschließt, wird die Quelle SOFORT als erledigt markiert – Supabase-Aufgabe → Status `abgeschlossen` (`adapter.py update aufgaben <id>`), Cockpit-Inbox-Item → Status `erledigt` (PATCH `cockpit_inbox?id=eq.<id>`). Kein Aufschub, keine Ausnahme. Der Tageslog dokumentiert nur was passiert ist, er ist kein Aufgaben-Tracker.
-- **Screenshots liegen in `~/Screenshots/`.** Sagt Florian "ich habe einen Screenshot gemacht", "guck dir das an" oder "gemacht", ist IMMER dieser Ordner gemeint — neueste Datei zuerst (`ls -t ~/Screenshots | head -3`), Dateiname `Bildschirmfoto YYYY-MM-DD um HH.MM.SS.png`. Nicht nach einem Anhang im Chat fragen und nicht suchen. (Konvention 04.08.2026 von Florian benannt, stand vorher nirgends.)
+- **Screenshots liegen in `~/Screenshots/`.** Sagt Florian "ich habe einen Screenshot gemacht", "guck dir das an" oder "gemacht", ist IMMER dieser Ordner gemeint — neueste Datei zuerst (`ls -t ~/Screenshots | head -3`), Dateiname `Bildschirmfoto YYYY-MM-DD um HH.MM.SS.png`. Nicht nach einem Anhang im Chat fragen und nicht suchen. [H44]
 - **Screenshots: Nicht raten.** Bei unscharfen/abgeschnittenen Texten in Screenshots lieber "[unleserlich]" schreiben als falsch raten. Florian korrigiert lieber als falsche Daten zu bekommen.
 - **Kontext nach Zweck laden, nicht nach Größe.** **Nachschlagewerke** (DATEI_INDEX, Tageslogs, Transkripte, Logs, Korpora, Mail-Archive) gezielt durchsuchen — Grep, `rag-search`, `offset` —, nie vollständig laden. **Anweisungen, denen ich gerade folge** (Skills, Workflows, Arbeitspakete, Pläne, Regeln) IMMER vollständig lesen, unabhängig von der Größe; auch beim Lesen über Bash (`sed`, `head`, `cat`), wo der Read-Token-Hook nicht greift. Wer eine Anweisung anschneidet, führt sie nicht aus, sondern rät sie. Bei spürbarer Verlangsamung: Kontext-Auslastung erwähnen, ggf. neue Session vorschlagen. [H24]
-- **Keine internen Begriffe nach außen.** "Agent", "Skill", "Sub-Agent" etc. nie in Dateien verwenden die an externe Personen gehen. **Ausnahme:** "Laura" darf in GettheFlo-Kommunikation verwendet werden – Laura stellt sich als KI-Assistentin vor (Florians Entscheidung 22.03.2026).
+- **Keine internen Begriffe nach außen.** "Agent", "Skill", "Sub-Agent" etc. nie in Dateien verwenden die an externe Personen gehen. **Ausnahme:** "Laura" darf in GettheFlo-Kommunikation verwendet werden – Laura stellt sich als KI-Assistentin vor. [H44]
 
 ## Nach Compaction (Kontext-Komprimierung)
 
@@ -135,8 +135,8 @@ Florian informieren: "Kontext wurde komprimiert – Kerndateien nachgeladen."
 ## Automatische Durchsetzung
 
 Kritische Regeln sind zusätzlich per Hooks/Deny-Liste erzwungen (settings.json):
-- Apple Mail MCP komplett entfernt (24.02.2026)
-- `hooks/rm-guard.sh` (PreToolUse/Bash): **rekursives** Löschen (`rm -r`, `rm -rf`) nur in Wegwerf-Pfaden — Scratchpad, `/tmp`, `node_modules`, `.next`, `.cache`, `.turbo`, `.playwright-mcp`. Überall sonst geblockt, mit Hinweis auf den gangbaren Weg. Einzelne Dateien zu löschen war nie gesperrt und bleibt erlaubt; für Kunden- und OneDrive-Inhalte gilt weiter der Weg über `dokumente.py` bzw. Florian fragen. Ersetzt seit 15.08.2026 die pauschalen Deny-Regeln `Bash(rm -rf *)` / `Bash(rm -r *)`, die am Werkzeug statt am Ziel ansetzten: Sie verhinderten das Aufräumen offensichtlicher Wegwerf-Ordner und ließen zugleich `rm ~/OneDrive/beleg.pdf` durch.
+- Apple Mail MCP komplett entfernt [H44]
+- `hooks/rm-guard.sh` (PreToolUse/Bash): **rekursives** Löschen (`rm -r`, `rm -rf`) nur in Wegwerf-Pfaden — Scratchpad, `/tmp`, `node_modules`, `.next`, `.cache`, `.turbo`, `.playwright-mcp`. Überall sonst geblockt, mit Hinweis auf den gangbaren Weg. Einzelne Dateien zu löschen war nie gesperrt und bleibt erlaubt; für Kunden- und OneDrive-Inhalte gilt weiter der Weg über `dokumente.py` bzw. Florian fragen. [H44]
 - Hookify: block-kundenordner-write, warn-placeholder-data
 - `hooks/git-push-guard.sh` (PreToolUse/Bash): Freigabe-Dialog vor `git push`, außer für die Allowlist-Repos oben; Force-Push immer Dialog
 - `.git/hooks/pre-push`: Unit-Tests laufen vor jedem Push, rot blockt — unabhängig von der Allowlist

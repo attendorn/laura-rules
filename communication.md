@@ -25,7 +25,7 @@
 - Keine Floskeln
 - Offene Aufgaben nur bei Tages-/Wochenplanung auflisten – nicht ungefragt
 - **Persönliche Nachrichten:** Keine Gedankenstriche (–). Natürlicher, lockerer Ton.
-- **Keine Zeitvorgaben in Stunden/Tagen** (eingeführt 08.05.2026). Statt "~3 h", "in 2 Wochen", "Mo 12.05." ausschließlich in **Phasen, Schritten und Meilensteinen** sprechen. Erlaubt: "Phase 1", "Schritt 3", "vor Workshop #2", "nach Datenmodell-Klärung", "wenn Hetzner steht". Verboten: "~3 h", "ca. 2 Tage", "diese Woche bis Freitag" — Florian baut häufig parallel, Zeitschätzungen sind Reibung. Ausnahme: konkrete externe Termine (z.B. "Workshop #2 am 23.05.") — die werden referenziert, nicht erfunden.
+- **Keine Zeitvorgaben in Stunden/Tagen.** Statt "~3 h", "in 2 Wochen", "Mo 12.05." ausschließlich in **Phasen, Schritten und Meilensteinen** sprechen. Erlaubt: "Phase 1", "Schritt 3", "vor Workshop #2", "nach Datenmodell-Klärung", "wenn Hetzner steht". Verboten: "~3 h", "ca. 2 Tage", "diese Woche bis Freitag" — Florian baut häufig parallel, Zeitschätzungen sind Reibung. Ausnahme: konkrete externe Termine (z.B. "Workshop #2 am 23.05.") — die werden referenziert, nicht erfunden. (Herkunft → guardrails-historie.md [H43])
 
 ## Architektur-Erklärungen vor Plan-Tabelle
 
@@ -38,35 +38,29 @@ Bei jeder geplanten Architektur-Änderung (System-Kernel-Eingriff, Hook-Bau, Ski
 
 Erst danach: technische Tabelle mit Code-Stellen, Smoke-Test-Plan, Risiken. Florian liest den Klartext, gibt Freigabe oder hakt nach. Die Tabelle ist Beleg, nicht Erklärung.
 
-Eingeführt 27.04.2026 nach Adapter-Multi-Agentur-Plan – Florians Wunsch: vor jeder Architektur-Änderung in Klartext erklären was läuft.
+(Herkunft → guardrails-historie.md [H43])
 
-## Beleg-Anker-Pflicht für Vollzugsaussagen (eingeführt 06.07.2026, Florian-Freigabe)
+## Beleg-Anker-Pflicht für Vollzugsaussagen
 
 **Jede Vollzugs-/Verifikations-Aussage im Chat nennt in derselben Nachricht ihren Beleg** — Tool-Ergebnis, ID, Pfad, Zitat. Ohne Beleg wird sie als Absicht formuliert („ich sichere das jetzt"), nicht als Vollzug („habe ich gesichert"). Gilt besonders für: „gespeichert/gesichert", „verifiziert", „läuft", „gepusht", „deployed" — und für Sammel-Aussagen: eine Freigabe/ein Test deckt nur die Pfade, die er nachweislich durchlaufen hat, nie pauschal alle Teilpfade.
 
-Hintergrund: `overcompletion_framing` trat 4× in Folge auf (Review 06.07., Drei-Schichten-Diagnose in `memory/reviews/2026-07-06-full.md`); die bestehenden Hooks erkennen Klassifikations-Wörter, nicht unbelegten Vollzug. Diese Regel ist die Sofort-Schicht; der Anti-Bias-Verifier (Roadmap `49f70990`) ist der geplante Mechanismus am selben Signal. Prüfpunkt: nächster Review.
+Bias-Muster: `overcompletion_framing`. (Herkunft → guardrails-historie.md [H40])
 
-## Design-Gate vor Einzelfixes (eingeführt 19.08.2026, Florian-Lektion)
+## Design-Gate vor Einzelfixes
 
 **Bevor ich anfange, an einer bestehenden Oberfläche oder einem Workflow etwas zu ändern, frage ich:
 „Ist das der eine Punkt — oder hast du mehrere Sachen gesehen?"** Sind es mehrere: erst eine
 Design-Runde (Canvas mit dem ganzen Fluss), dann bauen, dann EIN Deploy. Nicht Befund für Befund
 bauen und deployen.
 
-Anlass: 19.08.2026, Meeting-/Aufgaben-Umbau in Paula. Florian meldete über den Tag verteilt
-Einzelbefunde, ich baute und deployte jeden sofort — sechs Deploys, und jeder legte die nächste
-Schicht frei, weil niemand den Gesamtfluss durchdacht hatte. Erst als Florian das Vorgehen stoppte
-(„statt irgendwas mal final durchzudesignen … sonst wäre das sehr zäh"), entstand in wenigen Runden
-ein Entwurf, mit dem er zufrieden war. Seine Lektion wörtlich: „Könnte von dir immer die Frage
-gehen: Florian, ist es das eine, oder möchtest du mehrere Sachen besprechen? Dann würden wir direkt
-eine Designrunde auffahren, dass das nicht nochmal passiert."
+(Herkunft → guardrails-historie.md [H41])
 
 **Abgrenzung — wann NICHT fragen, sondern sofort bauen:** echte Fehler mit klarer Ursache
 (etwas funktioniert nicht, ist unerreichbar, verliert Daten, sieht kaputt aus). Die werden repariert,
 nicht durchdesignt. Das Gate gilt für Fragen der Form „wie soll das funktionieren/aussehen" —
 Konzept, Anordnung, Bedienfluss, Datenmodell-Wirkung.
 
-## Klassifikations-Disziplin (Skala vereinfacht 07.05.2026)
+## Klassifikations-Disziplin
 
 **Skala (zwei Stufen):**
 
@@ -94,12 +88,12 @@ Mindestens ein Marker im ±10-Zeilen-Kontext der Tag-Verwendung:
 
 Wenn keiner dieser Marker im Kontext: **SYNTHETISCH** schreiben, nicht VERIFIZIERT.
 
-**Hook-Durchsetzung (07.05.2026):**
+**Hook-Durchsetzung:**
 
 - `~/Laura/hooks/check-overcompletion.sh` (PostToolUse Write|Edit auf Tageslog/Memory/Skills): VERIFIZIERT/NUTZBAR ohne Beleg → **Hard-Block via JSON-Decision**. Done-Marker ohne Tag → weiche Warnung.
 - `~/Laura/hooks/check-overcompletion-chat.sh` (UserPromptSubmit): Tag im Chat → weiche Warnung „gehört in Tageslog/Memory".
 
-**Hintergrund:** Zwischen 27.04. und 06.05. wurde `overcompletion_framing` 7× geflaggt trotz Hook-Schutz und Pre-Tag-Routine in CLAUDE.md. Drei strukturelle Maßnahmen am 07.05.: (1) Klassifikation aus Chat raus, (2) Skala 4→2 Stufen, (3) Hard-Block im persistenten Pfad. Hook fängt nicht mehr im Chat-Output, sondern an der Persistenz-Grenze, wo der Beleg sowieso dokumentiert sein muss.
+(Herkunft → guardrails-historie.md [H42])
 
 ## Selbstoptimierung
 

@@ -6,17 +6,17 @@
 - Rollen liegen in `~/Laura/agents/roles/` mit **YAML-Frontmatter** (name, description, model, tools, memory)
 - **Named Agents** nutzen: `name: "kalender-scout"` beim Agent-Aufruf → per `SendMessage(to: "name")` in der Session wiederverwenden statt neu spawnen
 - Model-Wahl: **Haiku** = Datensammlung, einfache MCP-Calls. **Sonnet** = Analyse, Synthese, Schreibarbeit. **Opus** = nur Hauptkontext (Laura selbst)
-- **Ausnahme Richter-/Reviewer-Knoten (Verifikation, Gegenprüfung, `/gegenlesen` — AP-0098, 30.07.2026):** geordnete Fallback-Leiter `opus` (Default per Arena-Urteil 30.07., bestätigt im Schattenbetrieb an 3 echten Artefakten — 01.09.2026, 12 Winkel-Urteile, `work/gegenlesen-schatten/auswertung-2026-09-01.md`: der lokale Qwen-Zweig erreicht bei keinem Winkel eine vergleichbare Fangquote und vergab in 12 Läufen keinen BLOCKER; einsetzbar nur als Vorprüfer, nie als Richter — Florian-Entscheid 01.09.: kein eigener Vorprüfer-Schritt, Schattenbetrieb läuft als Dauerregel weiter) → `sonnet` (Fallback; False-BLOCKER-Neigung, siehe Matrix in `~/Laura/work/gegenlesen-modell-arena-2026-07-30.md`); Fable nur auf expliziten Florian-Zuruf, **niemals Haiku** — schwache Richter erzeugen False-Positive-Lawinen und übersehen echte Fehler. Die Zeile „Opus = nur Hauptkontext" gilt für Standard-Arbeits-Agenten, NICHT für Richter-Knoten. Modell beim Spawn immer explizit setzen, nie erben lassen.
+- **Ausnahme Richter-/Reviewer-Knoten (Verifikation, Gegenprüfung, `/gegenlesen`):** geordnete Fallback-Leiter `opus` (Default; der lokale Qwen ist Vorprüfer, nie Richter — Schattenbetrieb läuft als Dauerregel) → `sonnet` (Fallback, False-BLOCKER-Neigung); Fable nur auf expliziten Florian-Zuruf, **niemals Haiku** — schwache Richter erzeugen False-Positive-Lawinen und übersehen echte Fehler. Die Zeile „Opus = nur Hauptkontext" gilt für Standard-Arbeits-Agenten, NICHT für Richter-Knoten. Modell beim Spawn immer explizit setzen, nie erben lassen. (Herkunft → guardrails-historie.md [H36])
 
 ## Sub-Agent-Patterns
 - **Hintergrund** (`run_in_background: true`): Für unabhängige Tasks (Downloads, Sync, Update-Check)
 - **Vordergrund**: Wenn Ergebnis Gate für nächsten Schritt ist (Kalender-Scout → Briefing)
 - **Proaktive Delegation**: >8k erwartete Token im Hauptkontext → automatisch an Sub-Agent
 - **MCP-Vererbung**: Sub-Agents erben automatisch MCP Tools von dynamisch registrierten Servern (ab 2.1.101)
-- **Sub-Sub-Agents erlaubt bis Tiefe 3** (gelockert 30.07.2026, Florian-Freigabe; Claude Code erlaubt Nesting-Tiefe 3 seit 2.1.220). Default bleibt flach: Orchestrierung im Hauptkontext mit Tiefe-1-Sub-Agenten. Tiefe 2-3 nur wenn ein Sub-Agent echten Orchestrierungs-Bedarf hat (z.B. Verifier-Orchestrator spawnt Winkel-Reviewer) — nie aus Bequemlichkeit
+- **Sub-Sub-Agents erlaubt bis Tiefe 3** (Claude Code erlaubt Nesting-Tiefe 3 seit 2.1.220). Default bleibt flach: Orchestrierung im Hauptkontext mit Tiefe-1-Sub-Agenten. Tiefe 2-3 nur wenn ein Sub-Agent echten Orchestrierungs-Bedarf hat (z.B. Verifier-Orchestrator spawnt Winkel-Reviewer) — nie aus Bequemlichkeit (Herkunft → guardrails-historie.md [H39])
 - **Worktree-Isolation gehärtet seit 2.1.222**: `isolation: "worktree"` schützt jetzt Datei-Edits UND Bash in jedem Session-Typ gegen destruktive Git-Commands gegen das Haupt-Checkout (vorher Lücke). `/fork` erzeugt seit 2.1.221 ebenfalls ein eigenes Worktree statt im Ursprungs-Checkout zu arbeiten.
 
-## Session-Worktrees: was mitwandert und was nicht (26.08.2026, AP-0147 + AP-0251)
+## Session-Worktrees: was mitwandert und was nicht
 
 Mehrere Bau-Sitzungen parallel sind der Normalfall; je Sitzung ein eigener Worktree. Vier Regeln,
 alle gemessen, nicht angenommen (Messprotokolle → guardrails-historie.md [H27]):
@@ -40,7 +40,7 @@ Weitere Grenzen: Hook-Registrierung in `settings.json` ist global; `bin/python3`
 sind absolute Symlinks (venv/RAG geteilt); ein frischer Baum hat nichts Gitignoriertes; 19 launchd-Jobs
 adressieren den Hauptbaum; das Push-Rennen auf `main` bleibt.
 
-## Agent Teams (aktiviert 11.04.2026)
+## Agent Teams
 - **Experimentell**, aktiviert via `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings.json
 - **Unterschied zu Sub-Agents**: Teammates kommunizieren UNTEREINANDER (Mailbox), nicht nur zurück zum Parent
 - **Architektur**: Team Lead (Laura) + Teammates (eigene Claude-Instanzen) + Shared Task List + Mailbox
@@ -54,12 +54,12 @@ adressieren den Hauptbaum; das Push-Rennen auf `main` bleibt.
 
 ## Hooks (settings.json)
 - **Conditional Hooks**: `matcher`-Feld für Tool-spezifische Hooks (z.B. nur bei "Write|Edit")
-- **PreToolUse**: Validierung/Blocking vor Ausführung. **Bei Exit 0 erreicht weder stdout noch stderr irgendjemanden** (nur Debug-Log; Claude Code 2.1.251, Doku + Sitzungsprotokoll-Beleg 01.09.2026) — sichtbar ist dann ausschließlich JSON auf stdout: `hookSpecificOutput.additionalContext` erreicht das Modell, `systemMessage` den Nutzer. Bei Exit 2 (Block) ist stderr sichtbar. Ein Hook, der bei Exit 0 nur Text ausgibt, warnt niemanden — so lag die AP-0285-Anzeige drei echte Doppelsitzungs-Commits lang auf stderr (Memory `bed6392f`). Testrahmen müssen stdout/stderr TRENNEN, sonst ist der Kanalfehler unsichtbar.
+- **PreToolUse**: Validierung/Blocking vor Ausführung. **Bei Exit 0 erreicht weder stdout noch stderr irgendjemanden** (nur Debug-Log) — sichtbar ist dann ausschließlich JSON auf stdout: `hookSpecificOutput.additionalContext` erreicht das Modell, `systemMessage` den Nutzer. Bei Exit 2 (Block) ist stderr sichtbar. Ein Hook, der bei Exit 0 nur Text ausgibt, warnt niemanden. Testrahmen müssen stdout/stderr TRENNEN, sonst ist der Kanalfehler unsichtbar. (Herkunft → guardrails-historie.md [H37])
 - **PostToolUse**: Logging, Nachverarbeitung. `$CLAUDE_TOOL_INPUT` als JSON im Script lesen (nicht Shell-Expansion im command)
 - **SessionStart**: Terminal-Titel, Context Injection via stdout
 - **Plugin-Hooks** (ab 2.1.94): Hooks im Skill-Frontmatter funktionieren jetzt zuverlässig
-- **Aktive Hooks**: Skill-Usage-Log (PostToolUse/Skill), Test-Coverage-Check + Gedankenstrich-Warnung (PostToolUse/Write|Edit), Destruktive-Commands-Block (PreToolUse/Bash), Read-Token-Limit-Block (PreToolUse/Read, eingeführt 18.05.2026)
-- **PostToolUse feuert NICHT bei Tool-Errors** (18.05.2026 empirisch belegt). Bei Validierungs-Bedarf der Tool-Inputs/-Outputs IMMER PreToolUse, nie PostToolUse — PostToolUse läuft nur nach Erfolg.
+- **Aktive Hooks**: Skill-Usage-Log (PostToolUse/Skill), Test-Coverage-Check + Gedankenstrich-Warnung (PostToolUse/Write|Edit), Destruktive-Commands-Block (PreToolUse/Bash), Read-Token-Limit-Block (PreToolUse/Read)
+- **PostToolUse feuert NICHT bei Tool-Errors.** Bei Validierungs-Bedarf der Tool-Inputs/-Outputs IMMER PreToolUse, nie PostToolUse — PostToolUse läuft nur nach Erfolg.
 - **PreToolUse-Auto-Allow-Bypass in Background-Agent-Nebenoperationen gefixt (2.1.222)**: Summaries, Compaction und Renames von Hintergrund-Agents umgingen bisher Tool-Restrictions aus Auto-Allow-Hooks. Lauras Hooks (`check-overcompletion.sh`, `block-provinzial-write.sh`) greifen jetzt auch dort zuverlässig.
 
 ## Permission Model
@@ -67,7 +67,7 @@ adressieren den Hauptbaum; das Push-Rennen auf `main` bleibt.
 - **Deny-Liste**: Destruktive Commands (`git push`, `rm -rf`, `vercel --prod`) werden technisch geblockt
 - **Auto Mode**: Nutzbar wenn Deny-Liste vollständig. Respektiert explizite User-Grenzen seit 2.1.90
 
-## Anthropic-SDK Patterns (eingeführt 18.05.2026 aus Karpathy-Wiki-Spike)
+## Anthropic-SDK Patterns
 - **Strukturierter Output: IMMER Tool-Use, nie freier JSON-Text-Parse.** Tools mit `input_schema` definieren, `tool_choice={"type":"tool","name":...}` forced, dann `block.input` aus dem `tool_use`-Block extrahieren. Free-form JSON-Parse von Anthropic-Text-Responses ist brüchig bei großen Markdown-/Code-Inhalten (unescapte Quotes/Newlines sprengen `json.loads()`).
 - **Tool-Use kann char-by-char streamen** wenn Output > `max_tokens` — Schema-Violation. Symptom: `block.input["array_field"]` ist eine Liste von 1-Zeichen-Strings statt typed Array. Workaround: bei `isinstance(field, list) and all(isinstance(x, str) for x in field)` joinen + `json.loads()`. Besser: `max_tokens` hoch (32k+) oder Input-Volumen begrenzen.
 - **System-Prompt-Templates mit literalen `{}` (JSON-Beispiele): NIE `.format()`** — KeyError beim ersten unbekannten Klammer-Schlüssel. Statt dessen eigene Platzhalter `<<X>>` via `.replace()`. Robuster, kein Escape-Stress.
@@ -76,13 +76,13 @@ adressieren den Hauptbaum; das Push-Rennen auf `main` bleibt.
 ## MCP-Integration
 - MCP Result Size Override: Bis 500K Zeichen via `_meta["anthropic/maxResultSizeChars"]` (Server-seitig)
 - Tool-Routing: Einzelne MCP-Calls direkt, Batch (5+) via Sub-Agent
-- **Paula-MCP** (`~/paula/apps/paula-mcp/`, gebaut 11.05.2026): 10 `paula_*`-Tools für Provinzial-Operationen via Stdio. Registrierung: `claude mcp add paula --scope user node /Users/floriansiepe/inge/apps/paula-mcp/dist/index.js`. ENV: `PAULA_API_BASE` (default `localhost:3001`), `PAULA_DEMO_MODE=on` blockt Schreib-Tools. Tools: kontakt_lookup, get_kunde, get/aktualisiere/lege_beratung, lege/aktualisiere_aufgabe, lege_kommunikation, get/aktualisiere_termin. Plan: `~/Laura/work/plan-paula-mcp.md`.
-- **UUID-Validation bei Chat-getriggerten Tools (eingeführt 18.05.2026 nach Studio-Halluzination).** Wenn ein Tool als Input eine UUID aus dem Chat-Kontext annimmt (z.B. `entity_id` für `studio_propose`), muss die Tool-`execute()`-Funktion eine Regex-Validation VOR DB-Insert/API-Call machen. Grund: LLM neigt dazu Anzeige-Nummern („Workshop #2") oder Sequenz-Indizes („2") als UUID zu missinterpretieren. Plus Hinweis im Tool-Schema-Description: „MUSS UUID aus vorherigem find/list-Tool sein, NIEMALS aus Titel/Anzeige-Nummer ableiten." (Herkunft → guardrails-historie.md [H17])
+- **Paula-MCP** (`~/paula/apps/paula-mcp/`): 10 `paula_*`-Tools für Provinzial-Operationen via Stdio. Registrierung: `claude mcp add paula --scope user node /Users/floriansiepe/inge/apps/paula-mcp/dist/index.js`. ENV: `PAULA_API_BASE` (default `localhost:3001`), `PAULA_DEMO_MODE=on` blockt Schreib-Tools. Tools: kontakt_lookup, get_kunde, get/aktualisiere/lege_beratung, lege/aktualisiere_aufgabe, lege_kommunikation, get/aktualisiere_termin. Plan: `~/Laura/work/plan-paula-mcp.md`.
+- **UUID-Validation bei Chat-getriggerten Tools.** Wenn ein Tool als Input eine UUID aus dem Chat-Kontext annimmt (z.B. `entity_id` für `studio_propose`), muss die Tool-`execute()`-Funktion eine Regex-Validation VOR DB-Insert/API-Call machen. Grund: LLM neigt dazu Anzeige-Nummern („Workshop #2") oder Sequenz-Indizes („2") als UUID zu missinterpretieren. Plus Hinweis im Tool-Schema-Description: „MUSS UUID aus vorherigem find/list-Tool sein, NIEMALS aus Titel/Anzeige-Nummer ableiten." (Herkunft → guardrails-historie.md [H17])
 
 ## Architektur-Aufträge mit Buzzwords ("generalisieren", "modul", "studio")
-- **Mental-Model VOR Datenmodell klären (eingeführt 18.05.2026 nach Studio-Pfad-B-Missverständnis).** Bei jedem Architektur-Auftrag mit abstrakten Wörtern wie „generalisieren", „X als Modul", „aus jeder Entity X" zuerst rückfragen WIE der Trigger/Einstieg aussehen soll, nicht nur WAS technisch generalisiert wird. Rückfrage-Pflicht in der Brainstorm-Phase: „Wo soll Florian den Trigger sehen — Button in der Detail-Page? Chat-Eingabe? Slash-Command? Listen-Aktion?" Erst Mental-Model-Bestätigung, dann Datenmodell + UI gemeinsam. (Herkunft → guardrails-historie.md [H18])
+- **Mental-Model VOR Datenmodell klären.** Bei jedem Architektur-Auftrag mit abstrakten Wörtern wie „generalisieren", „X als Modul", „aus jeder Entity X" zuerst rückfragen WIE der Trigger/Einstieg aussehen soll, nicht nur WAS technisch generalisiert wird. Rückfrage-Pflicht in der Brainstorm-Phase: „Wo soll Florian den Trigger sehen — Button in der Detail-Page? Chat-Eingabe? Slash-Command? Listen-Aktion?" Erst Mental-Model-Bestätigung, dann Datenmodell + UI gemeinsam. (Herkunft → guardrails-historie.md [H18])
 
-## Modell oder Code? (eingeführt 31.08.2026)
+## Modell oder Code?
 
 **KI nur dort, wo Verstehen nötig ist — alles andere ist deterministischer Code.** Ein Modellaufruf
 ist zu rechtfertigen, nicht zu unterstellen: Er kostet Geld, ist nicht reproduzierbar und kann
@@ -97,7 +97,7 @@ Modells, den kein zweiter Modellaufruf zuverlässig gefunden hätte.** Umgekehrt
 Wo ein deterministischer Prüfer gebaut wird, muss er selbst geprüft werden — der erste Anlauf jenes
 Skripts löschte Zeilenumbrüche statt sie zu ersetzen und hätte fast einen falschen Befund erzeugt.
 
-### Schattenlauf bei teurer Arbeit (Florian-Vorgabe 31.08.2026)
+### Schattenlauf bei teurer Arbeit
 
 **Immer wenn etwas Token-Intensives startet — oder wenn im Nachhinein auffällt, dass es teuer war —
 läuft der lokale Qwen (MLX, Port 8081) zusätzlich über dieselbe Aufgabe.** Nicht als Ersatz: Sein
@@ -114,10 +114,10 @@ jede Auswertung, die sich wiederholt. Wo der Vergleich nicht geht, gehört das b
 fehlende Fähigkeit, kein schlechtes Ergebnis.
 
 Betriebswissen (Denkmodus abschalten, zwei getrennte Aufträge, Codezäune strippen, Beleg-Prüfung
-mechanisch gegenlesen): `work/video-abgleich-2026-08-31/LIESMICH.md`, Memory-Lesson `d83d3111`.
+mechanisch gegenlesen): `work/video-abgleich-2026-08-31/LIESMICH.md`.
 Laufende Messstrecke: AP-0286.
 
-## Fremde Lösungen: Baustein, Muster oder Messlatte? (eingeführt 31.08.2026)
+## Fremde Lösungen: Baustein, Muster oder Messlatte?
 
 Bevor eine fremde Lösung (Bibliothek, Framework, Plugin, fremder Workflow) bewertet wird, ihre
 **Rolle** benennen — sie ist genau eine der drei:
@@ -129,15 +129,11 @@ Bevor eine fremde Lösung (Bibliothek, Framework, Plugin, fremder Workflow) bewe
 | **Messlatte** | Weder Code noch Idee — sie zeigt, was gut genug wäre | Woran erkennen wir, dass wir gleichauf sind? |
 
 **Fremde Lösungen lösen fremde Probleme.** Ohne diese Trennung wird eine Sache als Ganzes
-angenommen oder als Ganzes verworfen — beides meist falsch. Anlass: Der Rat verwarf am 20.08.2026
-BMAD einstimmig als **Baustein** (Vertrauensinstanz an fremder Versions-Uhr, Memory `ea074be5`) —
-richtig, aber einzelne BMAD-Bausteine wären als **Muster** brauchbar gewesen, und der Befund über
-seine löchrige Durchsetzung war eine **Messlatte**, die uns den eigenen blinden Fleck zeigte.
-Gleiches Bild am 31.08. bei LangGraph: Konzept ja (Muster), Bibliothek nein (Baustein).
+angenommen oder als Ganzes verworfen — beides meist falsch. (Herkunft → guardrails-historie.md [H38])
 
 Die Rolle gehört in die Prior-Art-Prüfung des Arbeitspakets, nicht in den Kopf.
 
-## Paula-API: Routen-Bau-Disziplin (eingeführt 11.05.2026)
+## Paula-API: Routen-Bau-Disziplin
 - **Vor neuem Endpoint-Bau IMMER drei Stellen greppen**: `~/paula/apps/api/src/index.ts`, `~/paula/apps/api/src/routes/*`, **`~/paula/apps/api/src/lib/openapi-routes.ts`**. Letzteres registriert generische CRUD-Routes über `app.route('/', openapiRoutes)` als erstes — fängt deshalb gleichnamige Pfade vor allen anderen ab.
 - Sauberer Pfad: **bestehende Generic-Routes erweitern, nicht parallel bauen**.
 - Audit-Spalten-Disziplin: beim Datenbestand-Audit nie auf eine Spalte (`titel`) beschränken — komplette Repräsentation prüfen (`name`, `beschreibung`, etc.). (Welten-Zusammenführung 11.05.; Herkunft → guardrails-historie.md [H19])
