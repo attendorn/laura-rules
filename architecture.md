@@ -85,10 +85,10 @@ angenommen oder als Ganzes verworfen — beides meist falsch. (Herkunft → guar
 Die Rolle gehört in die Prior-Art-Prüfung des Arbeitspakets, nicht in den Kopf.
 
 ## PDF-Export
-- **Standard: Typst** – `bash ~/Laura/scripts/typst-pdf.sh template.typ [output.pdf] [json_data]`
-- Templates: `~/Laura/templates/typst/` (Rechnung, Vorsorgekonzept, weitere nach Bedarf)
+- **Standard: Typst** – `bash ~/Laura/code/scripts/typst-pdf.sh template.typ [output.pdf] [json_data]`
+- Templates: `~/Laura/code/templates/typst/` (Rechnung, Vorsorgekonzept, weitere nach Bedarf)
 - Deterministischer Seitenumbruch, Header/Footer nativ, 50-200ms, kein Browser
-- **Legacy: HTML-to-PDF** – `bash ~/Laura/scripts/html-to-pdf.sh` für bestehende HTML-Templates
+- **Legacy: HTML-to-PDF** – `bash ~/Laura/code/scripts/html-to-pdf.sh` für bestehende HTML-Templates
 - Rechnungen: Typst-Template mit `{{EPC_QR}}`. HTML-Template + QR-Script als Fallback
 - Neue Dokumente → immer Typst. Details: `memory/topics/html-print-css.md`
 

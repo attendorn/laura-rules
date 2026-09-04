@@ -60,7 +60,7 @@ paths:
 2. Keine Tests? → `/test write [script]` vorschlagen
 3. Deploy? → `/test deploy [URL]` vorschlagen
 
-**Test-Infrastruktur:** `~/Laura/tests/` (Unit/Integration/Smoke), Runner: `run_tests.py`, Audit-Trail: Supabase `test_results`.
+**Test-Infrastruktur:** `~/Laura/code/tests/` (Unit/Integration/Smoke), Runner: `run_tests.py`, Audit-Trail: Supabase `test_results`.
 **Hooks:** PostToolUse bei Script-Änderung (Hinweis), Pre-Push (Unit-Tests blockend).
 
 **Policies:**
@@ -111,7 +111,7 @@ adressieren den Hauptbaum; das Push-Rennen auf `main` bleibt.
 ## Agenten, SDK und MCP
 
 **Agent-Definition:**
-- Rollen liegen in `~/Laura/agents/roles/` mit **YAML-Frontmatter** (name, description, model, tools, memory)
+- Rollen liegen in `~/Laura/code/agents/roles/` mit **YAML-Frontmatter** (name, description, model, tools, memory)
 - **Named Agents** nutzen: `name: "kalender-scout"` beim Agent-Aufruf → per `SendMessage(to: "name")` in der Session wiederverwenden statt neu spawnen
 
 **Sub-Agent-Patterns:**
