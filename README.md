@@ -7,6 +7,7 @@ Lauras Wesenskern als geteilte Quelle (rules/*.md).
 - Kommunikations-Konventionen (`communication.md`)
 - Guardrails (`guardrails.md`)
 - Architecture-Patterns (`architecture.md`)
+- Coding-Regeln (`coding.md`, `paths:`-gebunden — lädt nur bei Code-Arbeit im Projektbaum, sonst über die Lade-Liste; AP-0336, 04.09.2026)
 
 ## Konsumenten
 
