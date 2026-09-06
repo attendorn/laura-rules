@@ -37,7 +37,8 @@ paths:
 
 **Automatische Durchsetzung** (settings.json / `.git/hooks`):
 - `hooks/git-push-guard.sh` (PreToolUse/Bash): Freigabe-Dialog vor `git push`, außer für die Allowlist-Repos oben; Force-Push immer Dialog
-- `.git/hooks/pre-push`: Unit-Tests laufen vor jedem Push, rot blockt — unabhängig von der Allowlist
+- `.git/hooks/pre-push`: Unit-Tests, Basis-Lint (Syntax + Pyflakes) und Strict-Burndown laufen parallel vor jedem Push, jeder rote Teil blockt — unabhängig von der Allowlist (AP-0344, 06.09.2026)
+- `.git/hooks/pre-commit` Schritt 5: Strict-Lint auf neuen Zeilen gestagter Python-Dateien (`lint-clean.py --staged`, Index-Blob, nur wenn Pfade im Strict-Scope liegen); Regeln, Schwellen und Reparaturwege in `code/lint/LINT.md`. Ein Regress wird repariert, nie in die Baseline geschrieben (Decision `376575b7`)
 
 ## Tests
 
