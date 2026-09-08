@@ -102,6 +102,16 @@ alle gemessen, nicht angenommen (Messprotokolle → guardrails-historie.md [H27]
   rüstet `npm ci` (outlook-resolver) und `.claude/settings.local.json` nach (beides gitignored).
   Wechsel mit `EnterWorktree` und Parameter **`path`** (nicht `name`). Zurück mit
   `git push origin HEAD:main` aus dem Baum, nie `merge --ff-only` im Hauptbaum, nie `--force`.
+  **Seit AP-0379 (08.09.2026):** Startpunkt ist `origin/main` nach einem `git fetch origin main` —
+  der lokale `main` hinkt hinterher, sobald eine Parallel-Sitzung schon gepusht hat; ohne Netz
+  bleibt der lokale `main`, aber mit lauter Warnung, nie still. Der Bootstrap nimmt zusätzlich
+  `code/config/personen.local.json` mit (gitignoriert; ohne sie starteten 13 bis 20 Unit-Tests rot)
+  und verlinkt `rules/` in den Baum.
+- **Ein verknüpfter Baum ist dasselbe Repo, nicht ein fremdes.** Werkzeuge, die ein Repo benennen,
+  bilden den Namen aus dem **Hauptbaum** (`git rev-parse --git-common-dir`, dessen
+  Elternverzeichnis), nie aus dem Verzeichnisnamen des Baums. Sonst trägt ein Rot-Beleg aus
+  `~/Laura-worktrees/<slug>` den Präfix `<slug>/…` und gilt im Hauptbaum als „fremd"
+  (`rot-gegenprobe.sh`, AP-0379).
 - **Hooks folgen der Sitzung, Slash-Commands nicht.** `~/.claude/commands` ist ein Symlink auf
   `code/commands` im Hauptbaum — ein geänderter Command wird **im Hauptbaum oder gar nicht** getestet.
 - **Nebenläufigkeit auf geteilten Dateien:** atomarer Ersatz genügt nicht, der Lese-Ändere-Schreibe-
