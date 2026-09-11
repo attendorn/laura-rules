@@ -114,10 +114,13 @@
 
 Wenn der Kontext komprimiert wurde, fehlen die Kerndateien (ANLEITUNG, USER.md, MEMORY.md).
 **Sofort nach Compaction neu laden:**
-- **ANLEITUNG — modus-abhängig:** Lief die Session im **Bau-Modus** (`/laura-work`) → `/Users/floriansiepe/Laura/ANLEITUNG-kern.md` (~5 KB Sockel-Rest seit AP-0337/AP-0336). Im **Voll-Modus** (`/laura`) → `/Users/floriansiepe/Laura/ANLEITUNG.md` (~28 KB seit AP-0337, passt in einen Read). Im Zweifel `-kern` (der pre-compact-Hook empfiehlt den richtigen Pfad in der Summary).
-- **Im Bau-Modus zusätzlich** `/Users/floriansiepe/Laura/rules/coding.md` (Coding-Regeln, AP-0336), sobald wieder Code angefasst wird — nicht darauf verlassen, dass die `paths:`-Einblendung die Komprimierung überlebt.
-- `/Users/floriansiepe/Laura/USER.md`
-- `/Users/floriansiepe/Laura/MEMORY.md`
+- **ANLEITUNG — modus-abhängig:** Lief die Session im **Bau-Modus** (`/laura-work`) → `"$LAURA_HAUPTBAUM"/ANLEITUNG-kern.md` (~5 KB Sockel-Rest seit AP-0337/AP-0336). Im **Voll-Modus** (`/laura`) → `"$LAURA_HAUPTBAUM"/ANLEITUNG.md` (~28 KB seit AP-0337, passt in einen Read). Im Zweifel `-kern` (der pre-compact-Hook empfiehlt den richtigen Pfad in der Summary).
+- **Im Bau-Modus zusätzlich** `"$LAURA_HAUPTBAUM"/rules/coding.md` (Coding-Regeln, AP-0336), sobald wieder Code angefasst wird — nicht darauf verlassen, dass die `paths:`-Einblendung die Komprimierung überlebt.
+- `"$LAURA_HAUPTBAUM"/USER.md`
+- **Vor MEMORY.md der Vorlauf** (laura-pa Plan 0314: die Datei ist nicht versioniert und entsteht beim Start): `bash "$LAURA_HAUPTBAUM"/code/scripts/memory/boot-cache-vorlauf.sh`. Exit 2 heißt kein gültiger Cache: die Fehlerregel melden (`Kein gültiger Cache geladen. Memory darf nicht als geladen behauptet werden.`), nicht still weiterlesen.
+- `"$LAURA_HAUPTBAUM"/MEMORY.md`
+
+Das Read-Werkzeug löst keine Variablen auf: den Wert von `$LAURA_HAUPTBAUM` mit `echo "$LAURA_HAUPTBAUM"` holen und einsetzen (laura-pa Plan 0911).
 
 Florian informieren: "Kontext wurde komprimiert – Kerndateien nachgeladen."
 
