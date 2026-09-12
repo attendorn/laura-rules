@@ -136,7 +136,7 @@ adressieren den Hauptbaum; das Push-Rennen auf `main` bleibt.
 - **Strukturierter Output: IMMER Tool-Use, nie freier JSON-Text-Parse.** Tools mit `input_schema` definieren, `tool_choice={"type":"tool","name":...}` forced, dann `block.input` aus dem `tool_use`-Block extrahieren. Free-form JSON-Parse von Anthropic-Text-Responses ist brüchig bei großen Markdown-/Code-Inhalten (unescapte Quotes/Newlines sprengen `json.loads()`).
 - **Tool-Use kann char-by-char streamen** wenn Output > `max_tokens` — Schema-Violation. Symptom: `block.input["array_field"]` ist eine Liste von 1-Zeichen-Strings statt typed Array. Workaround: bei `isinstance(field, list) and all(isinstance(x, str) for x in field)` joinen + `json.loads()`. Besser: `max_tokens` hoch (32k+) oder Input-Volumen begrenzen.
 - **System-Prompt-Templates mit literalen `{}` (JSON-Beispiele): NIE `.format()`** — KeyError beim ersten unbekannten Klammer-Schlüssel. Statt dessen eigene Platzhalter `<<X>>` via `.replace()`. Robuster, kein Escape-Stress.
-- **Anthropic-SDK-Standard:** `anthropic>=0.69.0`. Default-Modell `claude-sonnet-4-6` für Komplex-Tasks, `claude-haiku-4-5-20251001` für Einfach-Tasks. Cost-Logging via `resp.usage.input_tokens` / `output_tokens`.
+- **Anthropic-SDK-Standard:** `anthropic>=0.69.0`. Default-Modell `claude-sonnet-5` für Komplex-Tasks, `claude-haiku-4-5-20251001` für Einfach-Tasks (Stand 12.09.2026; `claude-opus-5` nur, wo geurteilt oder entschieden wird). Cost-Logging via `resp.usage.input_tokens` / `output_tokens`.
 
 ### MCP-Integration
 - MCP Result Size Override: Bis 500K Zeichen via `_meta["anthropic/maxResultSizeChars"]` (Server-seitig)

@@ -4,8 +4,8 @@
 > Bau-Regeln (Hooks, Worktrees, SDK/MCP, Paula-API/-Deploy, Git) stehen seit AP-0336 in `rules/coding.md` — im Projektbaum beim ersten Code-Read eingeblendet, außerhalb über die Lade-Liste.
 
 ## Agent-Definition
-- Model-Wahl: **Haiku** = Datensammlung, einfache MCP-Calls. **Sonnet** = Analyse, Synthese, Schreibarbeit. **Opus** = nur Hauptkontext (Laura selbst)
-- **Ausnahme Richter-/Reviewer-Knoten (Verifikation, Gegenprüfung, `/gegenlesen`):** geordnete Fallback-Leiter `opus` (Default; der lokale Qwen ist Vorprüfer, nie Richter — Schattenbetrieb läuft als Dauerregel) → `sonnet` (Fallback, False-BLOCKER-Neigung); Fable nur auf expliziten Florian-Zuruf, **niemals Haiku** — schwache Richter erzeugen False-Positive-Lawinen und übersehen echte Fehler. Die Zeile „Opus = nur Hauptkontext" gilt für Standard-Arbeits-Agenten, NICHT für Richter-Knoten. Modell beim Spawn immer explizit setzen, nie erben lassen. (Herkunft → guardrails-historie.md [H36])
+- Model-Wahl nach Aufgabe, nicht nach Rang: **Haiku** = Datensammlung, einfache MCP-Calls. **Sonnet** = Analyse, Synthese, Schreibarbeit. **Opus** = Hauptkontext (Laura selbst) und die Bau-Rollen `bauer` und `pruefer`, weil dort geurteilt und entschieden wird. Aktuelle Familie (Stand 12.09.2026): `claude-opus-5`, `claude-sonnet-5`, `claude-haiku-4-5-20251001`, dazu `claude-fable-5-1` nur auf Florians Zuruf. Reicht die Opus-Menge nicht (Wochenlimit), gilt die Fallback-Leiter der nächsten Zeile, auch für Bauer
+- **Ausnahme Richter-/Reviewer-Knoten (Verifikation, Gegenprüfung, `/gegenlesen`):** geordnete Fallback-Leiter `opus` (Default; der lokale Qwen ist Vorprüfer, nie Richter — Schattenbetrieb läuft als Dauerregel) → `sonnet` (Fallback, False-BLOCKER-Neigung); Fable nur auf expliziten Florian-Zuruf, **niemals Haiku** — schwache Richter erzeugen False-Positive-Lawinen und übersehen echte Fehler. Modell beim Spawn immer explizit setzen, nie erben lassen. (Herkunft → guardrails-historie.md [H36])
 
 ## Sub-Agent-Patterns
 - **Hintergrund** (`run_in_background: true`): Für unabhängige Tasks (Downloads, Sync, Update-Check)
