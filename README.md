@@ -11,13 +11,13 @@ Lauras Wesenskern als geteilte Quelle (rules/*.md).
 
 ## Konsumenten
 
-- **Mac/Filesystem:** `~/Laura/rules/` ← Florians lokaler Edit-Pfad
+- **Mac/Filesystem:** `rules/` ← Florians lokaler Edit-Pfad
 - **Cockpit/admin-gettheflo:** Submodule `vendor/laura-rules/` liegt noch, der Codegen `scripts/build-persona.mjs` ist seit 03.09.2026 **stillgelegt** (Florian-Entscheid) — der Voice-Systemprompt ist eingefroren, Edits hier erreichen das Cockpit nicht mehr automatisch. Neuer Ansatz offen.
 - **Zukünftige Clients:** Claude Code auf Hetzner-VM, VS Code mit Claude-Plugin etc.
 
 ## Read-Only-Vertrag für Konsumenten
 
-Edits passieren in `~/Laura/rules/` (Mac). Push hierhin = Single Source of Truth aktualisiert. Konsumenten ziehen den neuen Stand via `git submodule update --remote` oder analoge Mechanismen.
+Edits passieren in `rules/` (Mac). Push hierhin = Single Source of Truth aktualisiert. Konsumenten ziehen den neuen Stand via `git submodule update --remote` oder analoge Mechanismen.
 
 ## Lizenz
 

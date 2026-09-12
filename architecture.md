@@ -1,6 +1,6 @@
 # Claude Code Architecture Patterns
 
-> Kurzreferenz für Lauras Architekturentscheidungen. Bei Detailfragen: `~/Laura/memory/topics/claude-code-updates.md`
+> Kurzreferenz für Lauras Architekturentscheidungen. Bei Detailfragen: `memory/topics/claude-code-updates.md`
 > Bau-Regeln (Hooks, Worktrees, SDK/MCP, Paula-API/-Deploy, Git) stehen seit AP-0336 in `rules/coding.md` — im Projektbaum beim ersten Code-Read eingeblendet, außerhalb über die Lade-Liste.
 
 ## Agent-Definition
@@ -85,13 +85,13 @@ angenommen oder als Ganzes verworfen — beides meist falsch. (Herkunft → guar
 Die Rolle gehört in die Prior-Art-Prüfung des Arbeitspakets, nicht in den Kopf.
 
 ## PDF-Export
-- **Standard: Typst** – `bash ~/Laura/code/scripts/typst-pdf.sh template.typ [output.pdf] [json_data]`
-- Templates: `~/Laura/code/templates/typst/` (Rechnung, Vorsorgekonzept, weitere nach Bedarf)
+- **Standard: Typst** – `bash "$LAURA_HAUPTBAUM"/code/scripts/typst-pdf.sh template.typ [output.pdf] [json_data]`
+- Templates: `code/templates/typst/` (Rechnung, Vorsorgekonzept, weitere nach Bedarf)
 - Deterministischer Seitenumbruch, Header/Footer nativ, 50-200ms, kein Browser
-- **Legacy: HTML-to-PDF** – `bash ~/Laura/code/scripts/html-to-pdf.sh` für bestehende HTML-Templates
+- **Legacy: HTML-to-PDF** – `bash "$LAURA_HAUPTBAUM"/code/scripts/html-to-pdf.sh` für bestehende HTML-Templates
 - Rechnungen: Typst-Template mit `{{EPC_QR}}`. HTML-Template + QR-Script als Fallback
 - Neue Dokumente → immer Typst. Details: `memory/topics/html-print-css.md`
 
 ## Versions-Awareness
-- Changelog + Workflow-Impact: `~/Laura/memory/topics/claude-code-updates.md` (dort auch Prüf-/Update-Befehle)
+- Changelog + Workflow-Impact: `memory/topics/claude-code-updates.md` (dort auch Prüf-/Update-Befehle)
 - **Default Effort = High** seit 2.1.94 (steuerbar via `/effort`)

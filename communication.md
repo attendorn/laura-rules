@@ -90,8 +90,8 @@ Wenn keiner dieser Marker im Kontext: **SYNTHETISCH** schreiben, nicht VERIFIZIE
 
 **Hook-Durchsetzung:**
 
-- `~/Laura/code/hooks/check-overcompletion.sh` (PostToolUse Write|Edit auf Tageslog/Memory/Skills): VERIFIZIERT/NUTZBAR ohne Beleg → **Hard-Block via JSON-Decision**. Done-Marker ohne Tag → weiche Warnung.
-- `~/Laura/code/hooks/check-overcompletion-chat.sh` (UserPromptSubmit): Tag im Chat → weiche Warnung „gehört in Tageslog/Memory".
+- `code/hooks/check-overcompletion.sh` (PostToolUse Write|Edit auf Tageslog/Memory/Skills): VERIFIZIERT/NUTZBAR ohne Beleg → **Hard-Block via JSON-Decision**. Done-Marker ohne Tag → weiche Warnung.
+- `code/hooks/check-overcompletion-chat.sh` (UserPromptSubmit): Tag im Chat → weiche Warnung „gehört in Tageslog/Memory".
 
 (Herkunft → guardrails-historie.md [H42])
 

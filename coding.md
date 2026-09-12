@@ -20,20 +20,20 @@ paths:
 
 > Rollen-Datei für Bau-Arbeit (AP-0336, 04.09.2026). Umgezogen aus `guardrails.md`, `architecture.md`,
 > `persona-global.md` und `ANLEITUNG-kern.md`/`ANLEITUNG.md`, Wortlaut unverändert. **Zustellung:** im
-> Projektbaum `~/Laura` blendet Claude Code diese Datei beim ersten Lesen einer Code-Datei ein (`paths:`
-> oben, Globs aus den Adressen der offenen Pakete); für Code außerhalb (`~/paula`, `~/admin-gettheflo`,
-> `~/laura-huelle`, …) lädt `laura-work.md` Schritt 3b-Paket sie als erste Adresse der Lade-Liste.
+> Projektbaum (Hauptbaum) blendet Claude Code diese Datei beim ersten Lesen einer Code-Datei ein (`paths:`
+> oben, Globs aus den Adressen der offenen Pakete); für Code außerhalb (`paula`, `admin-gettheflo`,
+> `laura-huelle`, …) lädt `laura-work.md` Schritt 3b-Paket sie als erste Adresse der Lade-Liste.
 > Dieselbe Datei ist die Rollen-Datei des Coding-Agenten im Fabrik-Strang (AP-0324).
 > `[Hn]`-Marker = Anlass, Datum und Memory-Lesson stehen in `memory/topics/guardrails-historie.md`.
 
 ## Git, Commit und Push
 
 **VERBOTEN (ohne explizite Freigabe):**
-- **Git push — außer auf der Push-Allowlist.** Auto-Push ohne Rückfrage ist erlaubt für `laura-pa`, `laura-rules` und `admin-gettheflo`: dort sitzt kein weiterer Mitarbeiter drin, bei `admin-gettheflo` ist der Vercel-Live-Deploy bewusst in Kauf genommen — deshalb dort **nach** dem Push Smoke-Test der betroffenen Route. Alles andere (Paula/`inge`, unbekannte Repos) und **jeder** Force-Push behalten den Freigabe-Dialog. Umgesetzt in `hooks/git-push-guard.sh` über eine Remote-URL-Allowlist. Seit 06.09.2026 zusätzlich `AgentFoundary/Agents` (Florian, Foundry-Hackathon). **Der pre-push-Test-Hook ist von dieser Freigabe ausdrücklich NICHT erfasst:** rote Tests blocken den Push weiterhin, `--no-verify` ist verboten, der Fehlschlag wird gefixt. (Herkunft → guardrails-historie.md [H34]) **Umbau-Phase (Florian 08.09.2026, Decision 4e4ff39a):** Solange `~/Laura/work/.push-ohne-freigabe` liegt und ihr `bis:`-Datum nicht überschritten ist (gesetzt bis 08.10.2026), entfällt der Dialog für **jedes** Repo, nicht nur für die Allowlist. Force-Push bleibt dialogpflichtig, die pre-push-Tests blocken weiter. Verlängern heißt Datum ändern, beenden heißt Datei löschen; nach Ablauf gilt die Allowlist von selbst wieder, der Hook meldet die abgelaufene Datei.
+- **Git push — außer auf der Push-Allowlist.** Auto-Push ohne Rückfrage ist erlaubt für `laura-pa`, `laura-rules` und `admin-gettheflo`: dort sitzt kein weiterer Mitarbeiter drin, bei `admin-gettheflo` ist der Vercel-Live-Deploy bewusst in Kauf genommen — deshalb dort **nach** dem Push Smoke-Test der betroffenen Route. Alles andere (Paula/`inge`, unbekannte Repos) und **jeder** Force-Push behalten den Freigabe-Dialog. Umgesetzt in `hooks/git-push-guard.sh` über eine Remote-URL-Allowlist. Seit 06.09.2026 zusätzlich `AgentFoundary/Agents` (Florian, Foundry-Hackathon). **Der pre-push-Test-Hook ist von dieser Freigabe ausdrücklich NICHT erfasst:** rote Tests blocken den Push weiterhin, `--no-verify` ist verboten, der Fehlschlag wird gefixt. (Herkunft → guardrails-historie.md [H34]) **Umbau-Phase (Florian 08.09.2026, Decision 4e4ff39a):** Solange `work/.push-ohne-freigabe` liegt und ihr `bis:`-Datum nicht überschritten ist (gesetzt bis 08.10.2026), entfällt der Dialog für **jedes** Repo, nicht nur für die Allowlist. Force-Push bleibt dialogpflichtig, die pre-push-Tests blocken weiter. Verlängern heißt Datum ändern, beenden heißt Datei löschen; nach Ablauf gilt die Allowlist von selbst wieder, der Hook meldet die abgelaufene Datei.
 - **Pauschales Git-Staging.** `git add .`, `git add -A`, `git add <verzeichnis>` und `git commit -a` sind verboten. Gestaged wird **immer** eine explizite Pfadliste der Dateien, die zur eigenen Arbeit gehören. Vor jedem Commit `git status --short` lesen und fremde Pfade bewusst auslassen. **Die Pfadliste gehört auch an den Commit selbst (`git commit -m … -- <pfade>`), nicht nur ans add:** ein Commit ohne Pfadliste nimmt die gesamte Staging-Area mit, inklusive dessen, was eine Parallel-Session dort vorgestagt hat. `active-task.sh` ist ein Awareness-Signal, kein Schutz — es sagt wer woran arbeitet, verhindert aber kein Staging fremder Pfade. Wird eine Vereinnahmung erst nach dem Commit bemerkt: **kein Rebase, kein Reset, kein force-push.** Auf einem Baum mit aktiver Fremd-Session ist das destruktiv; der Vorfall wird benannt und Florian entscheidet. Technisch durchgesetzt durch `hooks/git-commit-guard.sh` (PreToolUse/Bash): Commit ohne Pfadliste, `-a`/`--all`, `-i`/`--include` (nimmt trotz Pfadliste alles schon Vorgemerkte mit, auch Fremddateien), Amend ohne Pfadliste, pauschale Pfadliste und `git add -A/./-u` werden hart geblockt, jeder Treffer landet in `work/.commit-guard.log`. **Merge-Ausnahme (Plan 0914):** Läuft im Ziel-Repo ein Merge, Cherry-pick oder Revert, verlangt git den Abschluss als Ganzes; dort geht `git commit` ohne Pfadliste durch (Log `ERLAUBT-MERGE`), `-i` ist dafür nicht nötig und außerhalb dieser Vorgänge gesperrt. `-a`/`--all` und Amend ohne Pfadliste bleiben auch dann gesperrt, und vor dem Abschluss `git status --short` lesen: der Commit nimmt die ganze Staging-Area mit. Notausgang `LAURA_COMMIT_GUARD_OVERRIDE=1` protokolliert sich selbst. **Der Hook prüft Form, nicht Eigentum:** Bearbeiten zwei Sessions dieselbe Datei, nimmt auch eine korrekte Pfadliste die fremden Zeilen mit — dagegen hilft nur Arbeitsteilung nach Dateien. [H22]
 
 **Policies:**
-- **Kein `git reset --hard` auf Florians Workspace ohne Vorab-Approval.** Bei Eingriff in einen Git-Repo unter `~/Laura/` (oder anderem Florian-Workspace) ist `git reset --hard` destruktiv für lokale Working-Tree-Edits. Auch wenn Diff-Check vorher zeigt dass alles identisch ist: Florian-OK vorher einholen. Backup-Verzeichnis allein reicht nicht — der Mac-Workspace ist nicht meine Sandbox. [H6]
+- **Kein `git reset --hard` auf Florians Workspace ohne Vorab-Approval.** Bei Eingriff in einen Git-Repo im Laura-Hauptbaum (oder anderem Florian-Workspace) ist `git reset --hard` destruktiv für lokale Working-Tree-Edits. Auch wenn Diff-Check vorher zeigt dass alles identisch ist: Florian-OK vorher einholen. Backup-Verzeichnis allein reicht nicht — der Mac-Workspace ist nicht meine Sandbox. [H6]
 
 **Automatische Durchsetzung** (settings.json / `.git/hooks`):
 - `hooks/git-push-guard.sh` (PreToolUse/Bash): Freigabe-Dialog vor `git push`, außer für die Allowlist-Repos oben; Force-Push immer Dialog
@@ -61,10 +61,10 @@ paths:
 2. Keine Tests? → `/test write [script]` vorschlagen
 3. Deploy? → `/test deploy [URL]` vorschlagen
 
-**Test-Infrastruktur:** `~/Laura/code/tests/` (Unit/Integration/Smoke), Runner: `run_tests.py`, Audit-Trail: Supabase `test_results`.
+**Test-Infrastruktur:** `code/tests/` (Unit/Integration/Smoke), Runner: `run_tests.py`, Audit-Trail: Supabase `test_results`.
 **Hooks:** PostToolUse bei Script-Änderung (Hinweis), Pre-Push (Unit-Tests blockend).
 
-**Rot-vor-Grün-Pflicht (AP-0284).** Ein neuer oder im Paket geänderter Test zählt erst als Beleg, wenn dokumentiert ist, dass er einmal fehlgeschlagen ist. Nachweis mit `code/scripts/rot-gegenprobe.sh <testdatei> [testname] [--zeile N]`, Register `code/tests/rot-belege.jsonl` (hashgebunden), Abgleich mit `--pruefe`. **Fünf Welten, vier Endungen (AP-0363):** `.bats` (bats), `.py` (pytest-Funktionen UND unittest.TestCase-Methoden, Selektor `Klasse::methode`), `.test.ts` (vitest), `.test.mjs` und `.test.js` mit `node:test`-Import (node:test, Selektor `node --test --test-name-pattern`). Wer unittest zu pytest schlägt, zählt vier Testrahmen: bats, pytest, vitest, node:test; gemeint ist dieselbe Liste. Testdateien aus fremden Repos (`~/paula`, `~/agent-foundry`) gehen denselben Weg, ihr Beleg trägt den Präfix `<basename der Git-Wurzel>/<rel>`. Hand-Einträge im Register sind Altbestand, kein Muster: für alle vier Endungen erzeugt das Werkzeug den Beleg selbst. Grenze: die Gegenprobe verfälscht EINE Zusicherung, kein Mutationstesten; Docker-gebundene Tests (`projekt.db.test.mjs`, `werkbank.rot.test.mjs`) sind ohne laufende Dienste nicht prüfbar.
+**Rot-vor-Grün-Pflicht (AP-0284).** Ein neuer oder im Paket geänderter Test zählt erst als Beleg, wenn dokumentiert ist, dass er einmal fehlgeschlagen ist. Nachweis mit `code/scripts/rot-gegenprobe.sh <testdatei> [testname] [--zeile N]`, Register `code/tests/rot-belege.jsonl` (hashgebunden), Abgleich mit `--pruefe`. **Fünf Welten, vier Endungen (AP-0363):** `.bats` (bats), `.py` (pytest-Funktionen UND unittest.TestCase-Methoden, Selektor `Klasse::methode`), `.test.ts` (vitest), `.test.mjs` und `.test.js` mit `node:test`-Import (node:test, Selektor `node --test --test-name-pattern`). Wer unittest zu pytest schlägt, zählt vier Testrahmen: bats, pytest, vitest, node:test; gemeint ist dieselbe Liste. Testdateien aus fremden Repos (`paula`, `agent-foundry`) gehen denselben Weg, ihr Beleg trägt den Präfix `<basename der Git-Wurzel>/<rel>`. Hand-Einträge im Register sind Altbestand, kein Muster: für alle vier Endungen erzeugt das Werkzeug den Beleg selbst. Grenze: die Gegenprobe verfälscht EINE Zusicherung, kein Mutationstesten; Docker-gebundene Tests (`projekt.db.test.mjs`, `werkbank.rot.test.mjs`) sind ohne laufende Dienste nicht prüfbar.
 
 **Policies:**
 - **Vollständigkeits-Check vor „X ist gefixt".** Bevor ein Code-Fix als erledigt kommuniziert wird, MUSS das Symptom/Pattern repo-weit gegrept werden. Dann gilt: ALLE Vorkommen fixen — oder explizit benennen welche bewusst offen bleiben. Verboten: einen Fix an einer Stelle machen und „erledigt" sagen, ohne geprüft zu haben an wie vielen Stellen dasselbe Pattern existiert. Wurzel-Bias `sample_size_blind`. Diese Regel deckt die Lücke der bestehenden sample_size-Regeln (die nur DB-Lookups + Klassifikations-Tags adressieren). [H15]
@@ -98,7 +98,7 @@ alle gemessen, nicht angenommen (Messprotokolle → guardrails-historie.md [H27]
   Vereinigung aus Sitzungs- und Hauptbaum. Am Hauptbaum bleiben `.active-tasks.json`, Not-Aus-Flags,
   Deploy-Freigaben, Browser-Profil, Alarmdateien, Lauflogs, Sperren. Skripte, die beides anfassen,
   brauchen zwei Variablen, nicht eine (`testsuite-lauf.sh` testete sonst aus jedem Baum den Hauptbaum).
-- **Ein Weg zum Baum:** `worktree.sh neu <slug>` → `~/Laura-worktrees/<slug>`, Zweig `wt/<slug>`,
+- **Ein Weg zum Baum:** `worktree.sh neu <slug>` → `../Laura-worktrees/<slug>` neben dem Hauptbaum, Zweig `wt/<slug>`,
   rüstet `npm ci` (outlook-resolver) und `.claude/settings.local.json` nach (beides gitignored).
   Wechsel mit `EnterWorktree` und Parameter **`path`** (nicht `name`). Zurück mit
   `git push origin HEAD:main` aus dem Baum, nie `merge --ff-only` im Hauptbaum, nie `--force`.
@@ -110,7 +110,7 @@ alle gemessen, nicht angenommen (Messprotokolle → guardrails-historie.md [H27]
 - **Ein verknüpfter Baum ist dasselbe Repo, nicht ein fremdes.** Werkzeuge, die ein Repo benennen,
   bilden den Namen aus dem **Hauptbaum** (`git rev-parse --git-common-dir`, dessen
   Elternverzeichnis), nie aus dem Verzeichnisnamen des Baums. Sonst trägt ein Rot-Beleg aus
-  `~/Laura-worktrees/<slug>` den Präfix `<slug>/…` und gilt im Hauptbaum als „fremd"
+  `../Laura-worktrees/<slug>` den Präfix `<slug>/…` und gilt im Hauptbaum als „fremd"
   (`rot-gegenprobe.sh`, AP-0379).
 - **Hooks folgen der Sitzung, Slash-Commands nicht.** `~/.claude/commands` ist ein Symlink auf
   `code/commands` im Hauptbaum — ein geänderter Command wird **im Hauptbaum oder gar nicht** getestet.
@@ -125,7 +125,7 @@ adressieren den Hauptbaum; das Push-Rennen auf `main` bleibt.
 ## Agenten, SDK und MCP
 
 **Agent-Definition:**
-- Rollen liegen in `~/Laura/code/agents/roles/` mit **YAML-Frontmatter** (name, description, model, tools, memory)
+- Rollen liegen in `code/agents/roles/` mit **YAML-Frontmatter** (name, description, model, tools, memory)
 - **Named Agents** nutzen: `name: "kalender-scout"` beim Agent-Aufruf → per `SendMessage(to: "name")` in der Session wiederverwenden statt neu spawnen
 
 **Sub-Agent-Patterns:**
@@ -140,11 +140,11 @@ adressieren den Hauptbaum; das Push-Rennen auf `main` bleibt.
 
 ### MCP-Integration
 - MCP Result Size Override: Bis 500K Zeichen via `_meta["anthropic/maxResultSizeChars"]` (Server-seitig)
-- **Paula-MCP** (`~/paula/apps/paula-mcp/`): 10 `paula_*`-Tools für Provinzial-Operationen via Stdio. Registrierung: `claude mcp add paula --scope user node /Users/floriansiepe/inge/apps/paula-mcp/dist/index.js`. ENV: `PAULA_API_BASE` (default `localhost:3001`), `PAULA_DEMO_MODE=on` blockt Schreib-Tools. Tools: kontakt_lookup, get_kunde, get/aktualisiere/lege_beratung, lege/aktualisiere_aufgabe, lege_kommunikation, get/aktualisiere_termin. Plan: `~/Laura/work/plan-paula-mcp.md`.
+- **Paula-MCP** (`paula:apps/paula-mcp/`): 10 `paula_*`-Tools für Provinzial-Operationen via Stdio. Registrierung: `claude mcp add paula --scope user node "$(bash "$LAURA_HAUPTBAUM"/code/lib/orte.sh nachbar inge)"/apps/paula-mcp/dist/index.js`. ENV: `PAULA_API_BASE` (default `localhost:3001`), `PAULA_DEMO_MODE=on` blockt Schreib-Tools. Tools: kontakt_lookup, get_kunde, get/aktualisiere/lege_beratung, lege/aktualisiere_aufgabe, lege_kommunikation, get/aktualisiere_termin. Plan: `work/plan-paula-mcp.md`.
 - **UUID-Validation bei Chat-getriggerten Tools.** Wenn ein Tool als Input eine UUID aus dem Chat-Kontext annimmt (z.B. `entity_id` für `studio_propose`), muss die Tool-`execute()`-Funktion eine Regex-Validation VOR DB-Insert/API-Call machen. Grund: LLM neigt dazu Anzeige-Nummern („Workshop #2") oder Sequenz-Indizes („2") als UUID zu missinterpretieren. Plus Hinweis im Tool-Schema-Description: „MUSS UUID aus vorherigem find/list-Tool sein, NIEMALS aus Titel/Anzeige-Nummer ableiten." (Herkunft → guardrails-historie.md [H17])
 
 ## Paula-API: Routen-Bau-Disziplin
-- **Vor neuem Endpoint-Bau IMMER drei Stellen greppen**: `~/paula/apps/api/src/index.ts`, `~/paula/apps/api/src/routes/*`, **`~/paula/apps/api/src/lib/openapi-routes.ts`**. Letzteres registriert generische CRUD-Routes über `app.route('/', openapiRoutes)` als erstes — fängt deshalb gleichnamige Pfade vor allen anderen ab.
+- **Vor neuem Endpoint-Bau IMMER drei Stellen greppen**: `paula:apps/api/src/index.ts`, `paula:apps/api/src/routes/*`, **`paula:apps/api/src/lib/openapi-routes.ts`**. Letzteres registriert generische CRUD-Routes über `app.route('/', openapiRoutes)` als erstes — fängt deshalb gleichnamige Pfade vor allen anderen ab.
 - Sauberer Pfad: **bestehende Generic-Routes erweitern, nicht parallel bauen**.
 - Audit-Spalten-Disziplin: beim Datenbestand-Audit nie auf eine Spalte (`titel`) beschränken — komplette Repräsentation prüfen (`name`, `beschreibung`, etc.). (Welten-Zusammenführung 11.05.; Herkunft → guardrails-historie.md [H19])
 - **Status-/Enum-Wert-Disziplin (eingeführt 22.05.2026).** Bevor ein neuer Wert für eine Status-/Enum-Spalte in Paula (oder jeder Postgres-Tabelle) im Code geschrieben wird, IMMER die echten DB-`CHECK`-Constraints prüfen — nicht nur die Drizzle-Schema-Datei. Drizzle-`text()`-Spalten mit Freitext-Kommentar (`// offen|beantwortet|…`) verbergen, dass die DB eine `CHECK`-Constraint trägt, die den neuen Wert ablehnt. Prüf-Kommando: `SELECT pg_get_constraintdef(oid) FROM pg_constraint WHERE conrelid='<tabelle>'::regclass AND contype='c';`. Wenn eine Constraint existiert → Migration die sie per `DROP CONSTRAINT IF EXISTS` + `ADD CONSTRAINT` mit dem erweiterten `ARRAY` neu setzt. Memory-Lesson `750e2bb4`. (Herkunft → guardrails-historie.md [H20])
@@ -154,12 +154,12 @@ adressieren den Hauptbaum; das Push-Rennen auf `main` bleibt.
 **Die Paula-API/-Web wird NICHT über Dokploy deployed.** Die Dokploy-App `Inge/api` ist verwaist (letzter Deploy April 2026), und **`github.com/attendorn/inge` ist eine TOTE Spur** (April-Skeleton, „hello-world api"). Nicht dorthin pushen — das triggert nichts. Der echte Deploy ist ein Blue/Green-Script:
 
 ```bash
-bash ~/paula/scripts/deploy-paula-prod.sh --dry-run   # IMMER zuerst (zeigt den Plan)
-bash ~/paula/scripts/deploy-paula-prod.sh api          # nur API-Pool (Rolling blue→green)
-bash ~/paula/scripts/deploy-paula-prod.sh web          # nur Web-Pool
+bash "$(bash "$LAURA_HAUPTBAUM"/code/lib/orte.sh nachbar paula)"/scripts/deploy-paula-prod.sh --dry-run   # IMMER zuerst (zeigt den Plan)
+bash "$(bash "$LAURA_HAUPTBAUM"/code/lib/orte.sh nachbar paula)"/scripts/deploy-paula-prod.sh api          # nur API-Pool (Rolling blue→green)
+bash "$(bash "$LAURA_HAUPTBAUM"/code/lib/orte.sh nachbar paula)"/scripts/deploy-paula-prod.sh web          # nur Web-Pool
 ```
 
-**DB-Migrationen separat VOR dem Code-Deploy** (additiv, Migrations-Datei in `~/paula/packages/db/migrations/`). **Cross-Session-Deploy-Check (PFLICHT):** das Script deployt immer den ganzen `main`-HEAD — vor jedem Deploy `git fetch origin main` und auf fremde Commits prüfen; sind welche da, NICHT blind deployen, sondern Florian klären lassen. Ablauf-Details, Server-Pfade und Anlass-Chronik: `memory/topics/paula-deploy.md`.
+**DB-Migrationen separat VOR dem Code-Deploy** (additiv, Migrations-Datei in `paula:packages/db/migrations/`). **Cross-Session-Deploy-Check (PFLICHT):** das Script deployt immer den ganzen `main`-HEAD — vor jedem Deploy `git fetch origin main` und auf fremde Commits prüfen; sind welche da, NICHT blind deployen, sondern Florian klären lassen. Ablauf-Details, Server-Pfade und Anlass-Chronik: `memory/topics/paula-deploy.md`.
 
 ## Web-Deploy (Vercel), Formulare, Multi-Service
 
@@ -180,4 +180,4 @@ bash ~/paula/scripts/deploy-paula-prod.sh web          # nur Web-Pool
 
 ## Architektur-Historie
 
-Bevor eine abgeschaffte Lösung erneut diskutiert wird: **`~/Laura/memory/topics/architektur-historie.md`** nachschlagen. Dort stehen ersetzte/entfernte Features mit Datum, Grund und Nachfolger. Bei jedem neuen "wir könnten das so bauen"-Gedanken zuerst prüfen, ob das schonmal da war. Die Datei wird nicht bei `/laura` automatisch geladen.
+Bevor eine abgeschaffte Lösung erneut diskutiert wird: **`memory/topics/architektur-historie.md`** nachschlagen. Dort stehen ersetzte/entfernte Features mit Datum, Grund und Nachfolger. Bei jedem neuen "wir könnten das so bauen"-Gedanken zuerst prüfen, ob das schonmal da war. Die Datei wird nicht bei `/laura` automatisch geladen.
