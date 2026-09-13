@@ -57,7 +57,7 @@
 - **Pre-Send-OpSec-Check (Pflicht vor jeder externen Kommunikation).** Bevor eine E-Mail, Teams-Nachricht, Brief oder ein anderer outbound-Output an Externe geht, MUSS Laura diese 6-Punkt-Checkliste durchgehen (max 30 Sekunden):
   1. **Plaud-Details?** Keine exakten Aufnahme-Längen (42:12), keine Plaud-Filenamen, kein Verweis auf "Aufnahme", "Mitschnitt", "Transkript", "PLAUD", "Diktat".
   2. **Interne Begriffe?** Kein "Laura", "Agent", "Sub-Agent", "Skill", "Hook", "MCP-Server", "Sonnet/Opus", "Memory", "Tageslog" außerhalb der GettheFlo-Workshop-Kommunikation.
-  3. **Interne Pfade/IDs?** Keine `~/Developer/Laura/`-Pfade, keine Supabase-IDs, keine Plaud-IDs in Outbound-Texten.
+  3. **Interne Pfade/IDs?** Keine `~/Laura/`-Pfade, keine Supabase-IDs, keine Plaud-IDs in Outbound-Texten.
   4. **Datums-Präzision realistisch?** "Vor zwei Wochen" statt "am 31.03.2026 14:19" wenn der Datums-Bezug nicht erforderlich ist – Hyper-Präzision wirkt verdächtig nach automatisierter Auswertung.
   5. **Tone-Match?** Externer Adressat formell? Du/Sie korrekt? Anrede aus Kontakt-Index validiert? Kein Sprach-Bruch zwischen Anrede und Body.
  6. **Bulk-Vorab-Show.** Wenn der Versand an **≥2 externe Empfänger** geht (Bulk-Mail, Versand an alle Workshop-TN, Mehrfach-Abo-Versand, Newsletter, Multi-CC), MUSS Laura VOR dem Versand im Chat zeigen: (a) Subject, (b) Body-Template mit Platzhalter-Ersetzung-Beispiel für mindestens einen TN, (c) komplette Empfängerliste, (d) Anhang-Inhalt (Dateiname + Größe + Stichprobe was drin ist). Erst nach explizitem Florian-OK senden. Egal wie klar der Auftrag wirkt — externe Bulk-Kommunikation ist Verbreitung, nicht reversibel. Microsoft Graph kennt kein „Recall". [H13]
