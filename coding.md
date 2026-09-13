@@ -128,7 +128,7 @@ adressieren den Hauptbaum; das Push-Rennen auf `main` bleibt.
 
 **Agent-Definition:**
 - Rollen liegen in `code/agents/roles/` mit **YAML-Frontmatter** (name, description, model, tools, memory)
-- **Bau-Rollen und Vorlagen liegen in Laura (Plan 0927, 13.09.2026):** `bauer.md`, `pruefer.md` und die geteilte Quelle `verfahren-bauen.md` unter `code/agents/roles/`, der Skill `/bauen` unter `code/skills/bauen/`, die Repo-Vorlagen samt `neu` und `nachziehen` unter `vorlagen/` (eigene Zone mit eigenen Regeln, Riegel von Laura greifen dort nicht auf die importierte Historie). `code/scripts/bootstrap.sh` verlinkt Rollen und Skill für Claude Code, Codex und Pi; das globale Regelblatt bleibt `agent-basis/AGENTS.md`, seine Wegweiser setzt allein agent-basis. `vorlagen/bin/verfahren --pruefe` hält das Bau-Verfahren in Rolle, Skill und Vorlagen gleich.
+- **Bau-Rollen und Vorlagen liegen in Laura (Plan 0927, 13.09.2026):** `bauer.md`, `pruefer.md` und die geteilte Quelle `verfahren-bauen.md` unter `code/agents/roles/`, der Skill `/bauen` unter `code/skills/bauen/`, die Repo-Vorlagen samt `neu` und `nachziehen` unter `vorlagen/` (eigene Zone mit eigenen Regeln, Riegel von Laura greifen dort nicht auf die importierte Historie). `code/scripts/bootstrap.sh` verlinkt Rollen und Skill für Claude Code, Codex und Pi; das globale Regelblatt bleibt `agent-basis:AGENTS.md`, seine Wegweiser setzt allein agent-basis. `vorlagen/bin/verfahren --pruefe` hält das Bau-Verfahren in Rolle, Skill und Vorlagen gleich.
 - **Named Agents** nutzen: `name: "kalender-scout"` beim Agent-Aufruf → per `SendMessage(to: "name")` in der Session wiederverwenden statt neu spawnen
 
 **Sub-Agent-Patterns:**
