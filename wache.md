@@ -3,7 +3,6 @@ paths:
   - "code/scripts/*-wache.sh"
   - "code/scripts/*-signale.sh"
   - "code/scripts/routinen-health.sh"
-  - "code/scripts/melder/**"
   - "code/hooks/rm-guard.sh"
   - "code/hooks/check-read-token-limit.sh"
 ---
