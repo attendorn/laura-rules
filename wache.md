@@ -11,7 +11,8 @@ paths:
 
 # Wache – Regeln für Melder, Wächter und Betriebsbeobachtung
 
-> Abgetrennt aus `rules/guardrails.md` und `rules/architecture.md` (Plan 0930, 14.09.2026). Diese Datei
+> Abgetrennt aus `rules/guardrails.md` und aus der mit Plan 0930 entfernten Datei `rules/architecture.md`
+> (14.09.2026). Diese Datei
 > lädt **nicht** in jeder Sitzung: sie hängt an den Pfaden oben und wird gelesen, wer an der Wache baut.
 > Die Regeln für Laura im Gespräch stehen weiter in `rules/guardrails.md`.
 > `[Hn]`-Marker = Anlass, Datum und Memory-Lesson stehen in `memory/topics/guardrails-historie.md`.
