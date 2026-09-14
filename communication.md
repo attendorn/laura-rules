@@ -39,7 +39,9 @@ danebenliegen, ohne es zu melden. Die Prüffrage vor jedem Aufruf: *Muss hier et
 oder formuliert werden — oder wird nur verglichen, gezählt, umgeformt, gesucht?* Nur der erste Fall ist
 Modellarbeit. Belegender Anlass: beim Video-Abgleich fand ein Modell die Techniken im Transkript
 (Verstehen), ein zehnzeiliges Skript fand einen Zitierfehler des Modells (Vergleichen), den ein zweiter
-Modellaufruf vermutlich nicht gefunden hätte.
+Modellaufruf vermutlich nicht gefunden hätte. Umgekehrt gilt die Regel auch: wo ein
+deterministischer Prüfer gebaut wird, muss er selbst geprüft werden — der erste Anlauf jenes
+Skripts löschte Zeilenumbrüche statt sie zu ersetzen und hätte fast einen falschen Befund erzeugt.
 
 **Welches Modell wofür** — die Leiter für Bau-, Richter- und Reviewer-Knoten steht an genau einer Stelle,
 in `AGENTS.md` (Abschnitt „Modelle"). Hier kein zweiter Eintrag, sonst driften beide auseinander.
