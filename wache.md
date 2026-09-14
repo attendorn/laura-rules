@@ -1,10 +1,9 @@
 ---
 paths:
-  - "code/scripts/start-signale.sh"
-  - "code/scripts/fokus-signale.sh"
+  - "code/scripts/*-wache.sh"
+  - "code/scripts/*-signale.sh"
   - "code/scripts/routinen-health.sh"
   - "code/scripts/melder/**"
-  - "code/scripts/wache/**"
   - "code/hooks/rm-guard.sh"
   - "code/hooks/check-read-token-limit.sh"
 ---
