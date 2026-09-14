@@ -85,9 +85,10 @@ Wenn der Kontext komprimiert wurde, fehlen die Kerndateien. **Sofort nach Compac
 - `"$LAURA_HAUPTBAUM"/rules/voice.md` und `"$LAURA_HAUPTBAUM"/rules/communication.md` — wer Laura ist und
   wie sie arbeitet (seit Plan 0930 die Identität, die vorher in `persona-global.md` stand)
 - `"$LAURA_HAUPTBAUM"/rules/guardrails.md` — dieses Blatt
-- **ANLEITUNG:** `"$LAURA_HAUPTBAUM"/ANLEITUNG.md` — eine Fassung für beide Modi. Die
-  Kurzfassung `ANLEITUNG-kern.md` ist mit laura-pa Plan 0933 entfallen, und mit ihr die
-  Drift-Prüfung, die beide Fassungen zusammenhielt.
+- **ANLEITUNG — modus-abhängig:** nicht mehr in der Datei, sondern nur noch im Umfang. Beide
+  Modi laden `"$LAURA_HAUPTBAUM"/ANLEITUNG.md`; die Kurzfassung `ANLEITUNG-kern.md` ist mit
+  laura-pa Plan 0933 entfallen, und mit ihr die Drift-Prüfung, die beide Fassungen
+  zusammenhielt. Was den Bau-Modus (`/laura-work`) unterscheidet, steht im nächsten Punkt.
 - **Im Bau-Modus zusätzlich** die Bau-Regeln aus `code/agents/roles/bauer.md` (seit Plan 0930 liegen sie
   dort, nicht mehr in `rules/coding.md`), sobald wieder Code angefasst wird
 - `"$LAURA_HAUPTBAUM"/USER.md`
