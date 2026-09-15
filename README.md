@@ -1,4 +1,15 @@
-# laura-rules
+# laura-rules — umgezogen nach laura-pa
+
+> **Dieses Repo wird nicht mehr gepflegt.** Lauras Regeln liegen seit dem 14.09.2026 mit ihrer
+> ganzen Historie im Repo **laura-pa**, dort unter `rules/` (Plan `0935-rules-zurueck-nach-laura-pa`,
+> uebernommen per `git subtree` ab Commit `511e097`). Hier wird nichts mehr geaendert; das Repo
+> bleibt als Historie und als Anker des eingefrorenen Cockpit-Submoduls `vendor/laura-rules`
+> (admin-gettheflo) bestehen.
+>
+> Grund des Umzugs: als eigenes Repo hatte eine Regeldatei keinen Arbeitsbaum — jede Aenderung galt
+> sofort in jeder laufenden Sitzung und konnte weder auf einem Zweig reifen noch durch ein Gate. Der
+> urspruengliche Grund fuer die Trennung (das Cockpit baute seinen Stimm-Systemprompt aus dem
+> Submodul) ist seit dem 03.09.2026 stillgelegt.
 
 Lauras Wesenskern als geteilte Quelle (rules/*.md).
 
